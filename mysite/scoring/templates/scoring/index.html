@@ -1,5 +1,28 @@
-<div>Scoring App</div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  {% load bootstrap5 %}
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
+  {% bootstrap_messages %}
+</head>
+<body>
 
-<div>
-Hello, world. You're at the scoring app index for game: {{ game }}
+<nav class="navbar bg-secondary">
+  <div class="container-fluid">
+    <a class="navbar-brand nav-link link-light" href="#">Django Scoring App</a>
+  </div>
+</nav>
+
+<div class="container mt-1">
+
+  {% block content %}
+  <div class="alert alert-primary" role="alert">
+    Hello, world. You're at the scoring app index for game: {{ game }}
+  </div>
+  {% endblock %}
+
 </div>
+</body>
+</html>
