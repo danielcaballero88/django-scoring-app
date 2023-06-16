@@ -1,4 +1,9 @@
 from django.http import HttpRequest, HttpResponse
+from django.template import loader
 
 def index(request: HttpRequest):
-    return HttpResponse(f"Hello, world. You're at the scoring app index for game: {request.GET.get('game')}")
+    template = loader.get_template("scoring/index.html")
+    context = {
+        "game": request.GET.get("game"),
+    }
+    return HttpResponse(template.render(context, request))
