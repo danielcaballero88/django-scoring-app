@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% url 'scoring:save' %}" method="post">
+<form action="{% url 'scoring:save' game %}" method="post">
   <!-- CSRF toke tag for POST forms targeted at internal urls. -->
   {% csrf_token %}
   <fieldset>
