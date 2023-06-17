@@ -1,0 +1,32 @@
+// Simple db model where each game will need to have two tables created for it:
+// <game>_boards and <game>_scores
+// Each time a new game is added to the app, these two tables need to be created
+// for it.
+
+Table players {
+  id integer [primary key]
+}
+
+Table agricola_boards {
+  id integer [primary key]
+  player_id integer [ref: > players.id]
+}
+
+Table agricola_scores {
+  id integer [primary key]
+  player_id integer [ref: > players.id]
+  board_id integer [ref: > agricola_boards.id]
+  fields_score integer
+  pastures_score integer
+  grains_score integer
+  vegetables_score integer
+  sheep_score integer
+  wild_boar_score integer
+  cattle_score integer
+  unused_spaces_score integer
+  fenced_stables_score integer
+  clay_hut_rooms_score integer
+  stone_house_rooms_score integer
+  family_members_score integer
+  cards_score integer
+}

@@ -1,0 +1,40 @@
+// Data model extensible for any number of games (unlike the simple data model
+// given in `./db_model_simple.dbml`).
+// Adding a new game to the app will only need to add a record for it in the
+// `games` table and then add records for the game scoring categories in the
+// (duh) `scoring_categories` table.
+
+Table players {
+  id integer [primary key]
+  name varchar(50)
+}
+
+Table games {
+  id integer [primary key]
+  name varchar(50)
+}
+
+Table scoring_categories {
+  id integer [primary key]
+  game_id integer [ref: > games.id]
+  name varchar(20)
+}
+
+Table boards {
+  id integer [primary key]
+  game_id integer [ref: > games.id]
+}
+
+Table boardplayers {
+  id integer [primary key]
+  board_id integer [ref: > boards.id]
+  player_id integer [ref: > players.id]
+}
+
+Table scores {
+  id integer [primary key]
+  player_id integer [ref: > players.id]
+  board_id integer [ref: > boards.id]
+  scoring_category_id integer [ref: > scoring_categories.id]
+  value integer
+}
