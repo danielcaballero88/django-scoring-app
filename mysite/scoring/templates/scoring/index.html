@@ -19,8 +19,13 @@
 
   {% block content %}
   <div class="alert alert-primary" role="alert">
-    Hello, world. You're at the scoring app index for game: {{ game }}
+    Hello, world. You're at the scoring app index.
   </div>
+  {% if game %}
+  <div class="alert alert-secondary">
+    Game '{{ game }}' is not yet implemented.
+  </div>
+  {% endif %}
   {% endblock %}
 
 </div>
