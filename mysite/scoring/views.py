@@ -11,3 +11,7 @@ def game(request: HttpRequest, game: str):
     template = loader.get_template(f"scoring/{game}.html")
     context = {}
     return HttpResponse(template.render(context, request))
+
+
+def save(request: HttpRequest):
+    return HttpResponse(f"{request.POST.get('score-21')}")

@@ -1,7 +1,45 @@
 {% extends './index.html' %}
 
 {% block content %}
-  <div class="alert alert-warning">
-    Agricola scoring view is being implemented.
-  </div>
+
+<form action="{% url 'scoring:save' %}" method="post">
+  <!-- CSRF toke tag for POST forms targeted at internal urls. -->
+  {% csrf_token %}
+  <fieldset>
+    <legend><h1>legend</h1></legend>
+    <!-- Display error message if any. -->
+    {% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+    <!-- Show list of choices. -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">Player 1</th>
+          <th scope="col">Player 2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Scoring Category 1</th>
+          <th scope="row"><input type="number" name="score-11" id="score-11"/></th>
+          <th scope="row"><input type="number" name="score-12" id="score-12"/></th>
+        </tr>
+        <tr>
+          <th scope="row">Scoring Category 2</th>
+          <th scope="row"><input type="number" name="score-21" id="score-21"/></th>
+          <th scope="row"><input type="number" name="score-22" id="score-22"/></th>
+        </tr>
+        <tr>
+          <th scope="row">Scoring Category 3</th>
+          <th scope="row"><input type="number" name="score-31" id="score-31"/></th>
+          <th scope="row"><input type="number" name="score-32" id="score-32"/></th>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+  <input type="submit" value="Save" />
+</form>
+
 {% endblock %}
