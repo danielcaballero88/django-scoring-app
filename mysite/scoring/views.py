@@ -2,9 +2,13 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 
+from .models import Game
+
 def index(request: HttpRequest):
     template = loader.get_template("scoring/index.html")
-    context = {}
+    context = {
+        "games": Game.objects.all()
+    }
     return HttpResponse(template.render(context, request))
 
 

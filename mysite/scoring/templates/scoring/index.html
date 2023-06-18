@@ -21,6 +21,16 @@
   <div class="alert alert-primary" role="alert">
     Hello, world. You're at the scoring app index.
   </div>
+
+  <div class="list-group">
+    {% for game in games %}
+    <a
+      href="{% url 'scoring:game' game.name %}"
+      class="list-group-item list-group-item-action">
+        {{ game.name }}
+    </a>
+    {% endfor %}
+  </div>
   {% endblock %}
 
 </div>
