@@ -16,11 +16,7 @@ class ScoringCategory(models.Model):
 
 class Board(models.Model):
     game = models.ForeignKey(Game, on_delete=models.RESTRICT)
-
-
-class BoardPlayer(models.Model):
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
-    player = models.ForeignKey(Player, on_delete=models.RESTRICT)
+    player = models.ManyToManyField(Player)
 
 
 class Score(models.Model):
