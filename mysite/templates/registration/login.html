@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}" />
+{% endblock extra_head %}
+
 {% block content %}
 
   {% if form.errors %}
