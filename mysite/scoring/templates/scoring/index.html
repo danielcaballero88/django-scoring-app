@@ -25,7 +25,7 @@
   <div class="list-group">
     {% for game in games %}
     <a
-      href="{% url 'scoring:game' game.name %}"
+      href="{% url 'scoring:score' game.name %}"
       class="list-group-item list-group-item-action">
         {{ game.name }}
     </a>

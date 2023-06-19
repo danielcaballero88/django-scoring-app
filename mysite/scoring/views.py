@@ -12,13 +12,16 @@ def index(request: HttpRequest):
     return HttpResponse(template.render(context, request))
 
 
-def game(request: HttpRequest, game: str):
-    template = loader.get_template(f"scoring/{game}.html")
+def score(request: HttpRequest, game_name: str):
+    template = loader.get_template(f"scoring/score.html")
+    game = Game.objects.get(name=game_name)
+    scoring_categories = game.scoringcategory_set.all()
     context = {
         "game": game,
+        "scoring_categories": scoring_categories,
     }
     return HttpResponse(template.render(context, request))
 
 
-def save(request: HttpRequest, game: str):
-    return HttpResponseRedirect(reverse("scoring:game", args=(game,)))
+def save(request: HttpRequest, game_name: str):
+    return HttpResponseRedirect(reverse("scoring:index"))

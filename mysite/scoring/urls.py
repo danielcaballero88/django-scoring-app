@@ -5,6 +5,6 @@ from . import views
 app_name = "scoring"
 urlpatterns = [
     path("", views.index, name="index"),
-    path("score/<str:game>/", views.game, name="game"),
-    path("save/<str:game>/", views.save, name="save")
+    path("score/<str:game_name>/", views.score, name="score"),
+    path("save/<str:game_name>/", views.save, name="save")
 ]
