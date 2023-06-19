@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% if form.errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+  {% endif %}
+
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p>Your account doesn't have access to this page. To proceed,
+      please login with an account that has access.</p>
+    {% else %}
+      <p>Please login to see this page.</p>
+    {% endif %}
+  {% endif %}
+
+  <div class="text-center">
+    <div class="form-signin">
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <img class="mb-4" src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div class="form-floating">
+          <input
+            type="text"
+            name="username"
+            maxlength="150"
+            id="id_username"
+            class="form-control"
+            placeholder="example_username_123"
+          >
+          <label for="id_username">Username</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required=""
+            id="id_password"
+            class="form-control"
+            placeholder="Password"
+          >
+          <label for="id_password">Password</label>
+        </div>
+
+        <div class="checkbox mb-3">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" value="login">Sign in</button>
+        <p class="mt-5 mb-3 text-muted">© 2017–2021</p>
+      </form>
+    </div>
+    {# Assumes you setup the password_reset view in your URLconf #}
+    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+  </div>
+
+{% endblock %}

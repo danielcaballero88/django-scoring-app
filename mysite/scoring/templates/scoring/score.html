@@ -1,6 +1,13 @@
 {% extends './index.html' %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 
 <form action="{% url 'scoring:save' game.name %}" method="post">
   <!-- CSRF toke tag for POST forms targeted at internal urls. -->

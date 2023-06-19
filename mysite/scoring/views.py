@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
@@ -24,4 +25,5 @@ def score(request: HttpRequest, game_name: str):
 
 
 def save(request: HttpRequest, game_name: str):
+    messages.debug(request, "Score saved.")
     return HttpResponseRedirect(reverse("scoring:index"))
