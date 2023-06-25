@@ -8,3 +8,7 @@
 .form-floating {
   margin-bottom: 1em;
 }
+
+.asteriskField {
+  display: none;
+}

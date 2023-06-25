@@ -1,11 +1,6 @@
-{% extends "base.html" %}
+{% extends "accounts/base.html" %}
 
-{% block extra_head %}
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'accounts/css/login.css' %}" />
-{% endblock extra_head %}
-
-{% block content %}
+{% block accounts__content %}
 <div class="text-center">
   <div class="form-signin">
     <form action="{% url 'accounts:login' %}" method="post">
@@ -40,5 +35,6 @@
       <button class="w-100 btn btn-lg btn-primary" type="submit" value="login">Log in</button>
     </form>
   </div>
+  <p><a href="{% url 'accounts:register' %}">Register a new account.</a></p>
 </div>
-{% endblock content %}
+{% endblock accounts__content %}
