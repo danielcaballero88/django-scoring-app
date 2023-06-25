@@ -1,15 +1,44 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'accounts/css/login.css' %}" />
+{% endblock extra_head %}
+
 {% block content %}
-<div class="ml-2">
+<div class="text-center">
   <div class="form-signin">
-    <div class="login-form-container">
-      <form action="{% url 'accounts:login' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_div }}
-        <input type="submit" value="Submit">
-      </form>
-    </div>
+    <form action="{% url 'accounts:login' %}" method="post">
+      {% csrf_token %}
+
+      <h1 class="h3 mb-3 fw-normal">Log in:</h1>
+
+      <div class="form-floating">
+        <input
+          type="text"
+          name="{{ form.username.name }}"
+          required=""
+          id="{{ form.username.auto_id }}"
+          class="form-control"
+          placeholder="{{ form.username.label }}"
+        >
+        <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+      </div>
+      <div class="form-floating">
+        <input
+          type="password"
+          name="{{ form.password.name }}"
+          autocomplete="current-password"
+          required=""
+          id="{{ form.password.auto_id }}"
+          class="form-control"
+          placeholder="{{ form.password.label }}"
+        >
+        <label for="{{ form.password.id_for_label }}">Password</label>
+      </div>
+
+      <button class="w-100 btn btn-lg btn-primary" type="submit" value="login">Log in</button>
+    </form>
   </div>
 </div>
 {% endblock content %}
