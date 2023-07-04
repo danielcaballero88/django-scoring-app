@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from django.http import HttpResponseRedirect
@@ -23,6 +23,7 @@ def login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 # A backend authenticated the credentials
+                django_login(request, user)
                 messages.success(request, f"Login success for {username}")
             else:
                 # No backend authenticated the credentials
@@ -38,6 +39,17 @@ def login(request):
         form = LoginForm()
 
     return render(request, "accounts/login.html", {"form": form})
+
+
+def logout(request):
+    user: User = request.user
+    if user.is_authenticated:
+        django_logout(request)
+        messages.info(request, "User logged out.")
+        return HttpResponseRedirect(reverse("scoring:index"))
+    else:
+        messages.error(request, "No user logged in.")
+        return HttpResponseRedirect(reverse("scoring:index"))
 
 
 def register(request):
@@ -96,16 +108,17 @@ def invite(request):
             invited_email = form.cleaned_data["invited_email"]
             repeat_email = form.cleaned_data["repeat_email"]
             try:
-                inviter = User.objects.get()
-                invited_user = InvitedUser(
-                    inviter =
-                )
-                user = User.objects.create_user(
-                    username=username,
-                    email=email,
-                    password=password,
-                )
-                user.save()
+                # inviter = User.objects.get()
+                # invited_user = InvitedUser(
+                #     inviter =
+                # )
+                # user = User.objects.create_user(
+                #     username=username,
+                #     email=email,
+                #     password=password,
+                # )
+                # user.save()
+                ...
             except IntegrityError as exc:
                 if (
                     hasattr(exc, "args")
