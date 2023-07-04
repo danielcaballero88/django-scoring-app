@@ -6,7 +6,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, InviteForm
+from .models import InvitedUser
 
 
 def login(request):
@@ -51,6 +52,54 @@ def register(request):
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
             try:
+                user = User.objects.create_user(
+                    username=username,
+                    email=email,
+                    password=password,
+                )
+                user.save()
+            except IntegrityError as exc:
+                if (
+                    hasattr(exc, "args")
+                    and isinstance(exc.args, tuple)
+                    and isinstance(exc.args[0], str)
+                    and "UNIQUE" in exc.args[0]
+                ):
+                    messages.error(
+                        request, f"Cannot register user {username}, alrady exists."
+                    )
+                else:
+                    raise exc
+            else:
+                messages.success(request, f"User {username} was registered correctly.")
+                # redirect to a new URL:
+                return HttpResponseRedirect(reverse("scoring:index"))
+        # else: the render statement at the end of this view will render
+        # the form again showing the errors that should be attached to
+        # the form in the POST request (?... need to check of course)
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = RegisterForm()
+
+    return render(request, "accounts/register.html", {"form": form})
+
+
+def invite(request):
+    # if this is a POST request we need to process the form data
+    if request.method == "POST":
+        # create a form instance and populate it with data from the request:
+        form = RegisterForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            invited_email = form.cleaned_data["invited_email"]
+            repeat_email = form.cleaned_data["repeat_email"]
+            try:
+                inviter = User.objects.get()
+                invited_user = InvitedUser(
+                    inviter =
+                )
                 user = User.objects.create_user(
                     username=username,
                     email=email,
