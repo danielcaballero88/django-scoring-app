@@ -7,4 +7,4 @@ class InvitedUser(models.Model):
     invited_email = models.EmailField("Invited user email.", max_length=100)
 
     def __str__(self):
-        return f"{self.invited_email} invited by {self.inviter.get_full_name()}"
+        return f"{self.invited_email} invited by {self.inviter.username}"
