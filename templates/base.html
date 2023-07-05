@@ -29,12 +29,12 @@
           </li>
           {% else %}
           <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'accounts:invite' %}">Invite</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" aria-current="page" href="{% url 'accounts:logout' %}">Logout</a>
           </li>
           {% endif %}
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="{% url 'accounts:invite' %}">Invite</a>
-          </li>
         </ul>
       </div>
     </div>
