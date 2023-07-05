@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.http import HttpResponseRedirect
@@ -8,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .forms import LoginForm, RegisterForm, InviteForm
-from .models import InvitedUser
+from .models import User, InvitedUser
 
 
 def login(request):
