@@ -64,6 +64,8 @@ def register(request):
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
             try:
+                # I'll validate that the username must be unique here, but it's better
+                # to do that in the form in the future.
                 user = User.objects.create_user(
                     username=username,
                     email=email,
@@ -77,9 +79,7 @@ def register(request):
                     and isinstance(exc.args[0], str)
                     and "UNIQUE" in exc.args[0]
                 ):
-                    messages.error(
-                        request, f"Cannot register user {username}, alrady exists."
-                    )
+                    form.add_error("username", "username is already in use")
                 else:
                     raise exc
             else:
