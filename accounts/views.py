@@ -63,32 +63,19 @@ def register(request):
             username = form.cleaned_data["username"]
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
-            try:
-                # I'll validate that the username must be unique here, but it's better
-                # to do that in the form in the future.
-                user = User.objects.create_user(
-                    username=username,
-                    email=email,
-                    password=password,
-                )
-                user.save()
-            except IntegrityError as exc:
-                if (
-                    hasattr(exc, "args")
-                    and isinstance(exc.args, tuple)
-                    and isinstance(exc.args[0], str)
-                    and "UNIQUE" in exc.args[0]
-                ):
-                    form.add_error("username", "username is already in use")
-                else:
-                    raise exc
-            else:
-                messages.success(request, f"User {username} was registered correctly.")
-                # redirect to a new URL:
-                return HttpResponseRedirect(reverse("accounts:login"))
-        # else: the render statement at the end of this view will render
-        # the form again showing the errors that should be attached to
-        # the form in the POST request (?... need to check of course)
+
+            # I'll validate that the username must be unique here, but it's better
+            # to do that in the form in the future.
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+            )
+            user.save()
+
+            messages.success(request, f"User {username} was registered correctly.")
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse("accounts:login"))
 
     # if a GET (or any other method) we'll create a blank form
     else:

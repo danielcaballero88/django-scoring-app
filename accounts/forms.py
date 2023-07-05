@@ -4,7 +4,7 @@ from crispy_bootstrap5.bootstrap5 import FloatingField
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import InvitedUser
+from .models import InvitedUser, User
 
 class LoginForm(forms.Form):
     username = forms.CharField(label="Username", max_length=100)
@@ -34,14 +34,29 @@ class RegisterForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data["password"] != cleaned_data["password2"]:
-            self.add_error("password", "Passwords don't match.")
-            self.add_error("password2", "Passwords don't match.")
 
         # Check that the registering user is invited.
         invited_user = InvitedUser.objects.filter(invited_email=cleaned_data["email"])
         if not invited_user:
             self.add_error("email", "This email is not invited to register an account.")
+            # Return now so non-invited people cannot even see if username/email or
+            # whatever is in use or not.
+            return cleaned_data
+
+        # Check uniqueness of username
+        user = User.objects.filter(username=cleaned_data["username"])
+        if user:
+            self.add_error("username", "username already in use")
+
+        # Check uniqueness of email
+        user = User.objects.filter(email=cleaned_data["email"])
+        if user:
+            self.add_error("email", "email already in use")
+
+        # Check that passwords must match.
+        if cleaned_data["password"] != cleaned_data["password2"]:
+            self.add_error("password", "Passwords don't match.")
+            self.add_error("password2", "Passwords don't match.")
 
         return cleaned_data
 
