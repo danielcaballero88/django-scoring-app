@@ -2,7 +2,9 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
 from crispy_bootstrap5.bootstrap5 import FloatingField
 from django import forms
+from django.core.exceptions import ValidationError
 
+from .models import InvitedUser
 
 class LoginForm(forms.Form):
     username = forms.CharField(label="Username", max_length=100)
@@ -36,6 +38,15 @@ class RegisterForm(forms.Form):
             self.add_error("password", "Passwords don't match.")
             self.add_error("password2", "Passwords don't match.")
 
+        # Check that the registering user is invited.
+        invited_user = InvitedUser.objects.filter(invited_email=cleaned_data["email"])
+        if not invited_user:
+            self.add_error("email", "This email is not invited to register an account.")
+
+        return cleaned_data
+
+
+
 class InviteForm(forms.Form):
     invited_email = forms.EmailField(label="Email", max_length=100)
     repeat_email = forms.EmailField(label="Repeat Email", max_length=100)
@@ -54,3 +65,21 @@ class InviteForm(forms.Form):
         )
 
         self.helper.add_input(Submit("invite", "Invite", css_class='w-100 btn btn-lg btn-primary'))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data["invited_email"] != cleaned_data["repeat_email"]:
+            msg = "Emails must match."
+            self.add_error("invited_email", msg)
+            self.add_error("repeat_email", msg)
+
+        # Check if this email is already invited.
+        invited_user = InvitedUser.objects.filter(invited_email=cleaned_data["invited_email"])
+        if invited_user:
+            raise ValidationError(
+                "Email %(invited_email)s is already invited",
+                params={"invited_email": cleaned_data["invited_email"]},
+                code="already_invited",
+            )
+
+        return cleaned_data

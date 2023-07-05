@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -85,7 +86,7 @@ def register(request):
             else:
                 messages.success(request, f"User {username} was registered correctly.")
                 # redirect to a new URL:
-                return HttpResponseRedirect(reverse("scoring:index"))
+                return HttpResponseRedirect(reverse("accounts:login"))
         # else: the render statement at the end of this view will render
         # the form again showing the errors that should be attached to
         # the form in the POST request (?... need to check of course)
@@ -101,46 +102,29 @@ def invite(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        form = RegisterForm(request.POST)
+        form = InviteForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
+            user: User = request.user
+            if user.is_anonymous:
+                # TODO: It would be nice to be able to forbid an anonymous user to even see this page.
+                raise ValidationError("Must be authenticated to invite a user.")
+            inviter = User.objects.get(pk=request.user.pk)
             invited_email = form.cleaned_data["invited_email"]
-            repeat_email = form.cleaned_data["repeat_email"]
-            try:
-                # inviter = User.objects.get()
-                # invited_user = InvitedUser(
-                #     inviter =
-                # )
-                # user = User.objects.create_user(
-                #     username=username,
-                #     email=email,
-                #     password=password,
-                # )
-                # user.save()
-                ...
-            except IntegrityError as exc:
-                if (
-                    hasattr(exc, "args")
-                    and isinstance(exc.args, tuple)
-                    and isinstance(exc.args[0], str)
-                    and "UNIQUE" in exc.args[0]
-                ):
-                    messages.error(
-                        request, f"Cannot register user {username}, alrady exists."
-                    )
-                else:
-                    raise exc
-            else:
-                messages.success(request, f"User {username} was registered correctly.")
-                # redirect to a new URL:
-                return HttpResponseRedirect(reverse("scoring:index"))
+
+            # Create new invitation in db.
+            inviter.inviteduser_set.create(invited_email=invited_email)
+
+            messages.success(request, f"Invitation for {invited_email} saved.")
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse("accounts:invite"))
         # else: the render statement at the end of this view will render
         # the form again showing the errors that should be attached to
         # the form in the POST request (?... need to check of course)
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = RegisterForm()
+        form = InviteForm()
 
-    return render(request, "accounts/register.html", {"form": form})
+    return render(request, "accounts/invite.html", {"form": form})
