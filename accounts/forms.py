@@ -72,6 +72,7 @@ class InviteForm(forms.Form):
             msg = "Emails must match."
             self.add_error("invited_email", msg)
             self.add_error("repeat_email", msg)
+            return cleaned_data
 
         # Check if this email is already invited.
         invited_user = InvitedUser.objects.filter(invited_email=cleaned_data["invited_email"])
