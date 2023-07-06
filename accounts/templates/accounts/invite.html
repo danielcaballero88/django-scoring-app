@@ -1,0 +1,12 @@
+{% extends "accounts/base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block accounts__content %}
+<div class="text-center">
+  <div class="form-signin">
+    <h1 class="h3 mb-3 fw-normal">Invite a friend:</h1>
+    {% crispy form %}
+  </div>
+</div>
+{% endblock accounts__content %}

@@ -140,3 +140,6 @@ LOGIN_REDIRECT_URL = '/'
 # Crispy forms with template pack bootstrap5
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Use the customized model User in accounts app as Django auth model.
+AUTH_USER_MODEL = "accounts.User"
