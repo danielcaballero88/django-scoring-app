@@ -54,6 +54,7 @@
                 </li>
               {% else %}
                 {% if request.user.is_authenticated %}
+                {% comment %} TODO: fix navbar when collapse, the manu is opening in a bad way to the right. {% endcomment %}
                   <li class="nav-item dropdown">
                     <button
                       type="button"
@@ -64,6 +65,14 @@
                       {{ request.user.username }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                      <li class="nav-item">
+                        <a
+                          class="dropdown-item"
+                          href="{% url 'scoring:profile' %}"
+                        >
+                          Profile
+                        </a>
+                      </li>
                       <li class="nav-item">
                         <a
                           class="dropdown-item"

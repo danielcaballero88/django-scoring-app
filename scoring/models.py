@@ -4,11 +4,7 @@ from accounts.models import User
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    displayname = models.CharField(
-        "displayname",
-        "Displayable username accross the app",
-        max_length=100,
-    )
+    displayname = models.CharField(max_length=100)
 
     def __str__(self):
         return f"Player: {self.displayname}"

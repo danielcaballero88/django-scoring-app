@@ -2,5 +2,6 @@
     "profile": "django",
     "indent": 2,
     "ignore": "H014",
-    "use_gitignore": true
+    "use_gitignore": true,
+    "extension": "html"
 }
