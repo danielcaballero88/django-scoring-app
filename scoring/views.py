@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
@@ -9,7 +10,7 @@ from .models import Game, Player
 
 def index(request: HttpRequest):
     if request.user.is_authenticated:
-        if not request.user.player_set.first():
+        if not hasattr(request.user, "player"):
             return HttpResponseRedirect(reverse("scoring:profile"))
 
     template = loader.get_template("scoring/index.html")
@@ -19,10 +20,10 @@ def index(request: HttpRequest):
     return HttpResponse(template.render(context, request))
 
 
-# TODO: Do not allow anonymous users to access this view.
+@login_required
 def profile(request: HttpRequest):
     # If the user doesn't have yet a player, we need to create one now.
-    player = request.user.player_set.first()
+    player = getattr(request.user, "player", None)
     if not player:
         player = Player(
             displayname=request.user.username,
