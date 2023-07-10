@@ -12,3 +12,7 @@
 .asteriskField {
   display: none;
 }
+
+.dropdown-menu {
+  position: absolute;
+}
