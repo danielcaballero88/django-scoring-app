@@ -8,12 +8,12 @@
     <title>
       {% block title %}Scoring App{% endblock title %}
     </title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     {% bootstrap_messages %}
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
     {% block extra_head %}
     {% endblock extra_head %}
   </head>
@@ -24,69 +24,55 @@
           Django Scoring App
         </a>
         <div class="d-flex">
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarText"
-            aria-controls="navbarText"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {% if request.user.is_anonymous %}
               <li class="nav-item">
-                <a
-                  class="nav-link ms-1"
-                  aria-current="page"
-                  href="{% url 'scoring:index' %}"
-                >
-                  Home
-                </a>
+                <a class="nav-link ms-1"
+                    aria-current="page"
+                    href="{% url 'accounts:login' %}">Login</a>
               </li>
-              {% if request.user.is_anonymous %}
-                <li class="nav-item">
-                  <a class="nav-link ms-1"
-                     aria-current="page"
-                     href="{% url 'accounts:login' %}">Login</a>
+            {% else %}
+              {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown">
+                  <button
+                    type="button"
+                    class="btn btn-secondary dropdown-toggle ms-1"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {{ request.user.player.displayname }}
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end position-absolute" aria-labelledby="navbarDropdown">
+                    <li class="nav-item">
+                      <a
+                        class="dropdown-item"
+                        href="{% url 'scoring:profile' %}"
+                      >
+                        Profile
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="dropdown-item"
+                        href="{% url 'accounts:invite' %}"
+                      >
+                        Invite friends
+                      </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="nav-item">
+                      <a
+                        class="dropdown-item"
+                        href="{% url 'accounts:logout' %}"
+                      >
+                        Log out
+                      </a>
+                    </li>
+                  </ul>
                 </li>
-              {% else %}
-                {% if request.user.is_authenticated %}
-                  <li class="nav-item dropdown">
-                    <button
-                      type="button"
-                      class="btn btn-secondary dropdown-toggle ms-1"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {{ request.user.username }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                      <li class="nav-item">
-                        <a
-                          class="dropdown-item"
-                          href="{% url 'accounts:invite' %}"
-                        >
-                          Invite friends
-                        </a>
-                      </li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li class="nav-item">
-                        <a
-                          class="dropdown-item"
-                          href="{% url 'accounts:logout' %}"
-                        >
-                          Log out
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                {% endif %}
               {% endif %}
-            </ul>
-          </div>
+            {% endif %}
+          </ul>
         </div>
       </div>
     </nav>

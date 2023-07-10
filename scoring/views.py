@@ -1,16 +1,57 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
 
-from .models import Game
+from .forms import ProfileForm
+from .models import Game, Player
+
 
 def index(request: HttpRequest):
+    if request.user.is_authenticated:
+        if not hasattr(request.user, "player"):
+            return HttpResponseRedirect(reverse("scoring:profile"))
+
     template = loader.get_template("scoring/index.html")
     context = {
         "games": Game.objects.all()
     }
     return HttpResponse(template.render(context, request))
+
+
+@login_required
+def profile(request: HttpRequest):
+    # If the user doesn't have yet a player, we need to create one now.
+    player = getattr(request.user, "player", None)
+    if not player:
+        player = Player(
+            displayname=request.user.username,
+            user=request.user
+        )
+        player.save()
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST)
+        try:
+            a = form.is_valid()
+        except Exception as exc:
+            print(exc)
+        if form.is_valid():
+            displayname = form.cleaned_data["displayname"]
+            player.displayname = displayname
+            player.save()
+            return HttpResponseRedirect(reverse("scoring:index"))
+    else:  # GET
+        form = ProfileForm(instance=player)
+        template = loader.get_template("scoring/profile.html")
+
+    # This return is not in the else because it will render errors for the POST case.
+    context = {
+        "form": form,
+    }
+    return render(request, "scoring/profile.html", context)
 
 
 def score(request: HttpRequest, game_name: str):

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="text-center">
+  <div class="form-signin">
+    <h1 class="h3 mb-3 fw-normal">Player profile:</h1>
+    {% crispy form %}
+  </div>
+</div>
+
+<div class="wip container text-center">
+  <p>
+    Work in progress: this page will contain the full player profile with a displayable name accross the app, a
+    description and other personal data. Maybe here they can also modify their email.
+    And also show the favourite games of the player, as well as the current and past boards
+    that they are in, with links to each scoring board.
+  </p>
+</div>
+{% endblock content %}

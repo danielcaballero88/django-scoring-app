@@ -1,11 +1,14 @@
 from django.db import models
+from accounts.models import User
 
 
 class Player(models.Model):
-    name = models.CharField(max_length=100)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    displayname = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Player: {self.name}"
+        return f"Player: {self.displayname}"
+
 
 class Game(models.Model):
     name = models.CharField(max_length=100)
@@ -20,6 +23,7 @@ class ScoringCategory(models.Model):
 
     def __str__(self):
         return f"Scoring Category: {self.name} for {self.game.name}"
+
 
 class Board(models.Model):
     game = models.ForeignKey(Game, on_delete=models.RESTRICT)
