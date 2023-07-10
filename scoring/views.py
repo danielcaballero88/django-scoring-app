@@ -8,6 +8,7 @@ from django.urls import reverse
 from .forms import ProfileForm
 from .models import Game, Player
 
+
 def index(request: HttpRequest):
     if request.user.is_authenticated:
         if not hasattr(request.user, "player"):
@@ -29,6 +30,7 @@ def profile(request: HttpRequest):
             displayname=request.user.username,
             user=request.user
         )
+        player.save()
 
     if request.method == "POST":
         form = ProfileForm(request.POST)

@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from .forms import LoginForm, RegisterForm, InviteForm
 from .models import User, InvitedUser
+from .signals import user_registration_signal
 
 
 def login(request):
@@ -72,8 +73,11 @@ def register(request):
                 password=password,
             )
             user.save()
-
             messages.success(request, f"User {username} was registered correctly.")
+            user_registration_signal.send(
+                sender = __name__,
+                user = user,
+            )
             # redirect to a new URL:
             return HttpResponseRedirect(reverse("accounts:login"))
 
