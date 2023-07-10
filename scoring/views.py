@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
 
-from .forms import ProfileForm
+from .forms import ProfileForm, AddGameForm
 from .models import Game, Player
 
 
@@ -53,6 +53,23 @@ def profile(request: HttpRequest):
     }
     return render(request, "scoring/profile.html", context)
 
+
+@login_required
+def add_game(request: HttpRequest):
+    if request.method == "POST":
+        form = AddGameForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+
+        return HttpResponseRedirect(reverse("scoring:add_game"))
+
+    else:
+        form = AddGameForm()
+
+    context = {
+        "form": form,
+    }
+    return render(request, "scoring/add_game.html", context)
 
 def score(request: HttpRequest, game_name: str):
     template = loader.get_template(f"scoring/score.html")
