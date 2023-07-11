@@ -43,8 +43,16 @@ class AddGameForm(ModelForm):
 
         self.helper.field_class = "form-floating"
 
-        # self.helper.layout = Layout(
-        #     FloatingField("displayname"),
-        # )
+        self.helper.layout = Layout(
+            FloatingField("name"),
+        )
 
         self.helper.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        game = Game.objects.filter(name=cleaned_data.get("name", "")).first()
+        if game:
+            self.add_error("name", "Game already exists.")
+
+        return cleaned_data

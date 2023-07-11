@@ -59,9 +59,9 @@ def add_game(request: HttpRequest):
     if request.method == "POST":
         form = AddGameForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
-
-        return HttpResponseRedirect(reverse("scoring:add_game"))
+            game = Game(name=form.cleaned_data["name"])
+            game.save()
+            return HttpResponseRedirect(reverse("scoring:add_game"))
 
     else:
         form = AddGameForm()
