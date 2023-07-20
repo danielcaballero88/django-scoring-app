@@ -7,7 +7,7 @@ from .models import Player, Game
 
 
 class ProfileForm(ModelForm):
-    # displayname = forms.CharField(label="Display Name", max_length=100)
+
     class Meta:
         model = Player
         exclude = ["user"]
@@ -26,7 +26,6 @@ class ProfileForm(ModelForm):
         )
 
         self.helper.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
-
 
 
 class AddGameForm(ModelForm):
@@ -51,8 +50,11 @@ class AddGameForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        game = Game.objects.filter(name=cleaned_data.get("name", "")).first()
+
+        # Check if the same game already exists in the DB.
+        clean_name = Game.get_clean_name(cleaned_data["name"])
+        game = Game.objects.filter(name=clean_name).first()
         if game:
-            self.add_error("name", "Game already exists.")
+            self.add_error("name", f"Game already exists as {clean_name}.")
 
         return cleaned_data

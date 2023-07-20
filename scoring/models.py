@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import User
 
+import re
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -12,6 +13,24 @@ class Player(models.Model):
 
 class Game(models.Model):
     name = models.CharField(max_length=100)
+
+    @staticmethod
+    def get_clean_name(name):
+        # Regex for a number of consequtive non-letter non-digit chars.
+        rgx = r"(\W|_)+"
+        # Clean leading and trailing non letters or numbers.
+        clean_name = re.sub(rf"^{rgx}|{rgx}$", "", name)
+        # Clean spaces, hyphens, etc, in the middle, and replace with a
+        # single space to avoid difference in using, e.g.,  - vs _.
+        clean_name = re.sub(rgx, " ", clean_name)
+        # capitalize
+        clean_name = clean_name.capitalize()
+
+        return clean_name
+
+    def save(self, *args, **kwargs):
+        self.name = self.get_clean_name(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Game: {self.name}"
