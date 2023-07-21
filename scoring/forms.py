@@ -1,9 +1,10 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
 from crispy_bootstrap5.bootstrap5 import FloatingField
-from django.forms import ModelForm
+from django.forms import ModelForm, Form, inlineformset_factory
+from django.urls import reverse
 
-from .models import Player, Game
+from .models import Player, Game, ScoringCategory
 
 
 class ProfileForm(ModelForm):
@@ -58,3 +59,22 @@ class AddGameForm(ModelForm):
             self.add_error("name", f"Game already exists as {clean_name}.")
 
         return cleaned_data
+
+
+ScoringCategoryFormSet = inlineformset_factory(Game, ScoringCategory, fields=["name"])
+
+class ScoringCategoryFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        game_name = kwargs.pop("game_name")
+        super().__init__(*args, **kwargs)
+
+        self.form_method = "post"
+        self.form_action = reverse("scoring:add_scoring_categories", args=(game_name,))
+
+        self.field_class = "form-floating"
+
+        self.layout = Layout(
+            FloatingField("name"),
+        )
+
+        self.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))

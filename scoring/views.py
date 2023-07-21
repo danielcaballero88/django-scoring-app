@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.urls import reverse
 
-from .forms import ProfileForm, AddGameForm
+from .forms import ProfileForm, AddGameForm, ScoringCategoryFormSet, ScoringCategoryFormSetHelper
 from .models import Game, Player
 
 
@@ -70,6 +70,32 @@ def add_game(request: HttpRequest):
         "form": form,
     }
     return render(request, "scoring/add_game.html", context)
+
+
+@login_required
+def add_scoring_categories(request: HttpRequest, game_name: str):
+    clean_game_name = Game.get_clean_name(game_name)
+    game = Game.objects.filter(name=clean_game_name).first()
+    if not game:
+        messages.error(request, f"Game {game_name} not found.")
+        return HttpResponseRedirect(reverse("scoring:index"))
+
+    if request.method == "POST":
+        formset = ScoringCategoryFormSet(request.POST)
+    else:
+        formset = ScoringCategoryFormSet(instance=game)
+
+    context = {
+        "formset": formset,
+        "helper": ScoringCategoryFormSetHelper(game_name=game_name),
+    }
+
+    return render(
+        request,
+        "scoring/add_scoring_categories.html",
+        context,
+    )
+
 
 def score(request: HttpRequest, game_name: str):
     template = loader.get_template(f"scoring/score.html")
