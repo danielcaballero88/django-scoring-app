@@ -6,7 +6,7 @@ from django.template import loader
 from django.urls import reverse
 
 from .forms import ProfileForm, AddGameForm, ScoringCategoryFormSet, ScoringCategoryFormSetHelper
-from .models import Game, Player
+from .models import Game, Player, ScoringCategory
 
 
 def index(request: HttpRequest):
@@ -81,7 +81,19 @@ def add_scoring_categories(request: HttpRequest, game_name: str):
         return HttpResponseRedirect(reverse("scoring:index"))
 
     if request.method == "POST":
-        formset = ScoringCategoryFormSet(request.POST)
+        formset = ScoringCategoryFormSet(request.POST, instance=game)
+        if formset.is_valid():
+            game.scoringcategory_set.all().delete()
+            for form in formset:
+                if "name" not in form.cleaned_data:
+                    continue
+                sc_name = form.cleaned_data["name"]
+                sc = ScoringCategory(
+                    game=game,
+                    name=sc_name,
+                )
+                sc.save()
+            return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game_name,)))
     else:
         formset = ScoringCategoryFormSet(instance=game)
 

@@ -78,3 +78,13 @@ class ScoringCategoryFormSetHelper(FormHelper):
         )
 
         self.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
+
+def scoring_category_formset_is_valid(formset, *args, **kwargs):
+    # Only keep forms with data: this can be undesired when emptying existing values
+    # (meaning leaving blank a value that previously had data) must be forbidden, but
+    # I want to allow it to delete an existing scoring category by just leaving it as
+    # an empty field.
+    formset.forms = [form for form in formset if form["name"].value()]
+    return super(ScoringCategoryFormSet, formset).is_valid(*args, **kwargs)
+
+ScoringCategoryFormSet.is_valid = scoring_category_formset_is_valid
