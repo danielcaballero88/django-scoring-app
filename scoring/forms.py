@@ -69,7 +69,7 @@ class ScoringCategoryFormSetHelper(FormHelper):
         super().__init__(*args, **kwargs)
 
         self.form_method = "post"
-        self.form_action = reverse("scoring:add_scoring_categories", args=(game_name,))
+        self.form_action = reverse("scoring:edit_game", args=(game_name,))
 
         self.field_class = "form-floating"
 

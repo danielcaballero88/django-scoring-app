@@ -70,7 +70,7 @@ def add_game(request: HttpRequest):
         if form.is_valid():
             game = Game(name=form.cleaned_data["name"])
             game.save()
-            return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game.name,)))
+            return HttpResponseRedirect(reverse("scoring:edit_game", args=(game.name,)))
 
     else:
         form = AddGameForm()
@@ -82,7 +82,7 @@ def add_game(request: HttpRequest):
 
 
 @login_required
-def add_scoring_categories(request: HttpRequest, game_name: str):
+def edit_game(request: HttpRequest, game_name: str):
     clean_game_name = Game.get_clean_name(game_name)
     game = Game.objects.filter(name=clean_game_name).first()
     if not game:
@@ -104,7 +104,7 @@ def add_scoring_categories(request: HttpRequest, game_name: str):
                 sc.save()
 
             if request.POST.get("save"):
-                return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game_name,)))
+                return HttpResponseRedirect(reverse("scoring:edit_game", args=(game_name,)))
             else: # save_and_exit
                 return HttpResponseRedirect(reverse("scoring:edit_games"
                                                     ))
@@ -118,7 +118,7 @@ def add_scoring_categories(request: HttpRequest, game_name: str):
 
     return render(
         request,
-        "scoring/add_scoring_categories.html",
+        "scoring/edit_game.html",
         context,
     )
 
