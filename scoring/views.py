@@ -103,7 +103,7 @@ def edit_game(request: HttpRequest, game_name: str):
                 )
                 sc.save()
 
-            if request.POST.get("save"):
+            if request.POST.get("save_and_add_more"):
                 return HttpResponseRedirect(reverse("scoring:edit_game", args=(game_name,)))
             else: # save_and_exit
                 return HttpResponseRedirect(reverse("scoring:edit_games"))
@@ -112,6 +112,7 @@ def edit_game(request: HttpRequest, game_name: str):
         formset = ScoringCategoryFormSet(instance=game)
 
     context = {
+        "game_name": game_name,
         "formset": formset,
         "helper": ScoringCategoryFormSetHelper(game_name=game_name),
     }

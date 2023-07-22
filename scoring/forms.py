@@ -77,7 +77,7 @@ class ScoringCategoryFormSetHelper(FormHelper):
             FloatingField("name"),
         )
 
-        self.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
+        self.add_input(Submit("save_and_add_more", "Save and add more", css_class='w-100 btn btn-lg btn-primary'))
         self.add_input(Submit("save_and_exit", "Save and exit", css_class='w-100 btn btn-lg btn-primary'))
 
 def scoring_category_formset_is_valid(formset, *args, **kwargs):
