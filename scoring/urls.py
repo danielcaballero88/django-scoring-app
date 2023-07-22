@@ -6,6 +6,7 @@ app_name = "scoring"
 urlpatterns = [
     path("", views.index, name="index"),
     path("profile/", views.profile, name="profile"),
+    path("edit_games/", views.edit_games, name="edit_games"),
     path("add_game/", views.add_game, name="add_game"),
     path(
         "add_scoring_categories/<str:game_name>/",

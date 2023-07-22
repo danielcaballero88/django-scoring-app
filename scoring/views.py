@@ -55,13 +55,22 @@ def profile(request: HttpRequest):
 
 
 @login_required
+def edit_games(request: HttpRequest):
+    template = loader.get_template("scoring/edit_games.html")
+    context = {
+        "games": Game.objects.all()
+    }
+    return HttpResponse(template.render(context, request))
+
+
+@login_required
 def add_game(request: HttpRequest):
     if request.method == "POST":
         form = AddGameForm(request.POST)
         if form.is_valid():
             game = Game(name=form.cleaned_data["name"])
             game.save()
-            return HttpResponseRedirect(reverse("scoring:add_game"))
+            return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game.name,)))
 
     else:
         form = AddGameForm()
@@ -93,7 +102,12 @@ def add_scoring_categories(request: HttpRequest, game_name: str):
                     name=sc_name,
                 )
                 sc.save()
-            return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game_name,)))
+
+            if request.POST.get("save"):
+                return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game_name,)))
+            else: # save_and_exit
+                return HttpResponseRedirect(reverse("scoring:edit_games"
+                                                    ))
     else:
         formset = ScoringCategoryFormSet(instance=game)
 

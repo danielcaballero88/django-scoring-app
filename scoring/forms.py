@@ -78,6 +78,7 @@ class ScoringCategoryFormSetHelper(FormHelper):
         )
 
         self.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
+        self.add_input(Submit("save_and_exit", "Save and exit", css_class='w-100 btn btn-lg btn-primary'))
 
 def scoring_category_formset_is_valid(formset, *args, **kwargs):
     # Only keep forms with data: this can be undesired when emptying existing values

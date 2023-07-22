@@ -46,6 +46,23 @@
                     <li class="nav-item">
                       <a
                         class="dropdown-item"
+                        href="{% url 'scoring:add_game' %}"
+                      >
+                        Add New Game
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="dropdown-item"
+                        href="{% url 'scoring:edit_games' %}"
+                      >
+                        Edit Games
+                      </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="nav-item">
+                      <a
+                        class="dropdown-item"
                         href="{% url 'scoring:profile' %}"
                       >
                         Profile
@@ -59,7 +76,6 @@
                         Invite friends
                       </a>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
                     <li class="nav-item">
                       <a
                         class="dropdown-item"
