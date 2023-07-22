@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-1">
+
+  {% if messages %}
+  <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+  </ul>
+  {% endif %}
+
+  <div class="text-center">
+    <h1 class="h3 mb-3 fw-normal">Edit games:</h1>
+    <div class="list-group">
+      {% for game in games %}
+      <a
+        href="{% url 'scoring:add_scoring_categories' game.name %}"
+        class="list-group-item list-group-item-action">
+          {{ game.name }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+
+</div>
+{% endblock content %}
