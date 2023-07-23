@@ -59,15 +59,23 @@ class ScoringCategory(models.Model):
 
 class Board(models.Model):
     game = models.ForeignKey(Game, on_delete=models.RESTRICT)
-    player = models.ManyToManyField(Player)
+    player = models.OneToOneField(Player, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Board: {self.pk}, playing {self.game} - {self.player}"
 
 
-class Score(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.RESTRICT)
+class Scorer(models.Model):
+    name = models.CharField(max_length=50)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Scorer: {self.name}"
+
+
+class Score(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    scorer = models.ForeignKey(Scorer, on_delete=models.RESTRICT)
     scoring_category = models.ForeignKey(ScoringCategory, on_delete=models.RESTRICT)
     value = models.IntegerField(default=0)
 
