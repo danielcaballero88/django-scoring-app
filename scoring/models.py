@@ -4,8 +4,21 @@ from accounts.models import User
 import re
 
 class Player(models.Model):
+    class Role(models.TextChoices):
+        REGULAR = "regular"
+        EDITOR = "editor"
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     displayname = models.CharField(max_length=100)
+    role = models.CharField(
+        max_length=20,
+        choices=Role.choices,
+        default=Role.REGULAR,
+    )
+
+    @property
+    def is_editor(self):
+        return self.role == self.Role.EDITOR
 
     def __str__(self):
         return f"Player: {self.displayname}"
