@@ -59,7 +59,7 @@ class ScoringCategory(models.Model):
 
 class Board(models.Model):
     game = models.ForeignKey(Game, on_delete=models.RESTRICT)
-    player = models.OneToOneField(Player, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Board: {self.pk}, playing {self.game} - {self.player}"
