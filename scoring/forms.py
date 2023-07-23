@@ -69,7 +69,7 @@ class ScoringCategoryFormSetHelper(FormHelper):
         super().__init__(*args, **kwargs)
 
         self.form_method = "post"
-        self.form_action = reverse("scoring:add_scoring_categories", args=(game_name,))
+        self.form_action = reverse("scoring:edit_game", args=(game_name,))
 
         self.field_class = "form-floating"
 
@@ -77,7 +77,7 @@ class ScoringCategoryFormSetHelper(FormHelper):
             FloatingField("name"),
         )
 
-        self.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
+        self.add_input(Submit("save_and_add_more", "Save and add more", css_class='w-100 btn btn-lg btn-primary'))
         self.add_input(Submit("save_and_exit", "Save and exit", css_class='w-100 btn btn-lg btn-primary'))
 
 def scoring_category_formset_is_valid(formset, *args, **kwargs):

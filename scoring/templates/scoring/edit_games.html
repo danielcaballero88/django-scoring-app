@@ -16,7 +16,7 @@
     <div class="list-group">
       {% for game in games %}
       <a
-        href="{% url 'scoring:add_scoring_categories' game.name %}"
+        href="{% url 'scoring:edit_game' game.name %}"
         class="list-group-item list-group-item-action">
           {{ game.name }}
       </a>

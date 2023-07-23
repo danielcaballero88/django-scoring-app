@@ -1,9 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.urls import reverse
+from django.views.decorators.http import require_POST
+
 
 from .forms import ProfileForm, AddGameForm, ScoringCategoryFormSet, ScoringCategoryFormSetHelper
 from .models import Game, Player, ScoringCategory
@@ -70,7 +72,7 @@ def add_game(request: HttpRequest):
         if form.is_valid():
             game = Game(name=form.cleaned_data["name"])
             game.save()
-            return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game.name,)))
+            return HttpResponseRedirect(reverse("scoring:edit_game", args=(game.name,)))
 
     else:
         form = AddGameForm()
@@ -82,7 +84,7 @@ def add_game(request: HttpRequest):
 
 
 @login_required
-def add_scoring_categories(request: HttpRequest, game_name: str):
+def edit_game(request: HttpRequest, game_name: str):
     clean_game_name = Game.get_clean_name(game_name)
     game = Game.objects.filter(name=clean_game_name).first()
     if not game:
@@ -103,24 +105,32 @@ def add_scoring_categories(request: HttpRequest, game_name: str):
                 )
                 sc.save()
 
-            if request.POST.get("save"):
-                return HttpResponseRedirect(reverse("scoring:add_scoring_categories", args=(game_name,)))
+            if request.POST.get("save_and_add_more"):
+                return HttpResponseRedirect(reverse("scoring:edit_game", args=(game_name,)))
             else: # save_and_exit
-                return HttpResponseRedirect(reverse("scoring:edit_games"
-                                                    ))
+                return HttpResponseRedirect(reverse("scoring:edit_games"))
+
     else:
         formset = ScoringCategoryFormSet(instance=game)
 
     context = {
+        "game_name": game_name,
         "formset": formset,
         "helper": ScoringCategoryFormSetHelper(game_name=game_name),
     }
 
     return render(
         request,
-        "scoring/add_scoring_categories.html",
+        "scoring/edit_game.html",
         context,
     )
+
+@login_required
+@require_POST
+def delete_game(request: HttpRequest, game_name: str):
+    clean_game_name = Game.get_clean_name(game_name)
+    Game.objects.filter(name=clean_game_name).delete()
+    return HttpResponseRedirect(reverse("scoring:edit_games"))
 
 
 def score(request: HttpRequest, game_name: str):
