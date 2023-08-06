@@ -133,6 +133,15 @@ def delete_game(request: HttpRequest, game_name: str):
     return HttpResponseRedirect(reverse("scoring:edit_games"))
 
 
+@login_required
+def add_board(request: HttpRequest):
+    template = loader.get_template(f"scoring/add_board.html")
+    context = {
+        "games": Game.objects.all()
+    }
+    return HttpResponse(template.render(context, request))
+
+
 def score(request: HttpRequest, game_name: str):
     template = loader.get_template(f"scoring/score.html")
     game = Game.objects.get(name=game_name)
