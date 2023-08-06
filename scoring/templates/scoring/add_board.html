@@ -15,7 +15,7 @@
   <div class="list-group">
     {% for game in games %}
     <a
-      href="#"
+      href="{% url 'scoring:add_board_players' game.name %}"
       class="list-group-item list-group-item-action">
         {{ game.name }}
     </a>

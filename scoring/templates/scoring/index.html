@@ -18,7 +18,9 @@
 
   <div class="buttons-container">
     <button class="btn btn-primary" type="button">See Scores</button>
-    <button class="btn btn-primary mt-3" type="button">Start New Score</button>
+    <a href="{% url "scoring:add_board" %}">
+      <button class="btn btn-primary mt-3 w-100" type="button">Start New Score</button>
+    </a>
   </div>
 
 </div>

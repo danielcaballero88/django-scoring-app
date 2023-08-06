@@ -11,6 +11,7 @@ urlpatterns = [
     path("edit_game/<str:game_name>/", views.edit_game, name="edit_game"),
     path("delete_game/<str:game_name>/", views.delete_game, name="delete_game"),
     path("add_board", views.add_board, name="add_board"),
+    path("add_board_players/<str:game_name_or_board_pk>/", views.add_board_players, name="add_board_players"),
     path("score/<str:game_name>/", views.score, name="score"),
     path("save/<str:game_name>/", views.save, name="save"),
 ]

@@ -7,8 +7,8 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 
-from .forms import ProfileForm, AddGameForm, ScoringCategoryFormSet, ScoringCategoryFormSetHelper
-from .models import Game, Player, ScoringCategory
+from .forms import ProfileForm, AddGameForm, ScoringCategoryFormSet, ScoringCategoryFormSetHelper, AddScorersFormSet, AddScorersFormSetHelper
+from .models import Game, Player, ScoringCategory, Board, Scorer
 
 
 def index(request: HttpRequest):
@@ -140,6 +140,62 @@ def add_board(request: HttpRequest):
         "games": Game.objects.all()
     }
     return HttpResponse(template.render(context, request))
+
+
+@login_required
+def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
+    try:
+        board_pk = int(game_name_or_board_pk)
+        board = get_object_or_404(Board, pk=board_pk)
+        game = board.game
+        game_name = game.name
+    except ValueError as exc:
+        game_name = game_name_or_board_pk
+        clean_game_name = Game.get_clean_name(game_name)
+        game = Game.objects.filter(name=clean_game_name).first()
+        board = Board(game=game, player=request.user.player)
+        board.save()
+        board_pk = board.pk
+
+    if not game:
+        messages.error(request, f"Game {game_name} not found.")
+        return HttpResponseRedirect(reverse("scoring:index"))
+
+    if request.method == "POST":
+        formset = AddScorersFormSet(request.POST, instance=board)
+        if formset.is_valid():
+            # Create a new board:
+            for form in formset:
+                if "name" not in form.cleaned_data:
+                    continue
+                scorer_name = form.cleaned_data["name"]
+                scorer = Scorer(
+                    name=scorer_name,
+                    board=board,
+                )
+                scorer.save()
+
+            if request.POST.get("save_and_add_more"):
+                return HttpResponseRedirect(reverse("scoring:add_board_players", args=(str(board_pk),)))
+            else: # save_and_exit
+                messages.info(request, f"Success creating board {board_pk} with players {board.scorer_set.all()}")
+                return HttpResponseRedirect(reverse("scoring:index"))
+
+    else:
+        formset = AddScorersFormSet(instance=board)
+
+    context = {
+        "board_pk": board_pk,
+        "game_name": game_name,
+        "formset": formset,
+        "helper": AddScorersFormSetHelper(board_pk=board_pk),
+    }
+
+    return render(
+        request,
+        "scoring/edit_game.html",
+        context,
+    )
 
 
 def score(request: HttpRequest, game_name: str):

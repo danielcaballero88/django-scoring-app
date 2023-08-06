@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'scoring/css/forms.css' %}" />
+{% endblock extra_head %}
+
+{% block content %}
+<div class="text-center">
+  <div class="form-signin">
+    <h1 class="h3 mb-3 fw-normal">Add Board Players:</h1>
+    {% crispy formset helper %}
+  </div>
+{% endblock content %}
