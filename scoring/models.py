@@ -80,4 +80,4 @@ class Score(models.Model):
     value = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"Score for {self.player.name} for {self.scoring_category.name}: {self.value}"
+        return f"Score for {self.scorer.name} for {self.scoring_category.name}: {self.value}"

@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 
 
 from .forms import ProfileForm, AddGameForm, ScoringCategoryFormSet, ScoringCategoryFormSetHelper, AddScorersFormSet, AddScorersFormSetHelper
-from .models import Game, Player, ScoringCategory, Board, Scorer
+from .models import Game, Player, ScoringCategory, Board, Scorer, Score
 
 
 def index(request: HttpRequest):
@@ -208,15 +208,60 @@ def boards_list(request: HttpRequest):
 @login_required
 def board_score(request: HttpRequest, board_pk: int):
     board = get_object_or_404(Board, pk=board_pk)
+
+    if request.method == "POST":
+        score_keys = (key for key in request.POST if key.startswith("score"))
+        for score_key in score_keys:
+            score_key_parts = score_key.split("-")
+            scoring_category_pk= int(score_key_parts[1])
+            scorer_pk = int(score_key_parts[2])
+            score = Score.objects.filter(
+                board_id=board_pk,
+                scorer_id=scorer_pk,
+                scoring_category_id=scoring_category_pk,
+            ).first()
+            if score is None:
+                score = Score(
+                    board_id=board_pk,
+                    scorer_id=scorer_pk,
+                    scoring_category_id=scoring_category_pk,
+                    value = 0,
+                )
+            value_str = request.POST[score_key]
+            if value_str:
+                value = int(value_str)
+            else:
+                value = 0
+            score.value = value
+            score.save()
+        messages.info(request, f"Save success for board {board.pk}.")
+        return HttpResponseRedirect(reverse("scoring:board_score", args=(board_pk,)))
+
     game = board.game
     scoring_categories = game.scoringcategory_set.all()
     scorers = board.scorer_set.all()
     template = loader.get_template(f"scoring/board_score.html")
+    score_values = {}
+    for scoring_category in scoring_categories:
+        score_values[scoring_category.pk] = {}
+        for scorer in scorers:
+            score_key = f"score-{scoring_category.pk}-{scorer.pk}"
+            score = Score.objects.filter(
+                board_id=board_pk,
+                scoring_category_id=scoring_category.pk,
+                scorer_id=scorer.pk,
+            ).first()
+            if score:
+                score_value = score.value
+            else:
+                score_value = 0
+            score_values[scoring_category.pk][scorer.pk] = score_value
     context = {
         "board": board,
         "game": game,
         "scoring_categories": scoring_categories,
         "scorers": scorers,
+        "score_values": score_values,
     }
     return HttpResponse(template.render(context, request))
 
