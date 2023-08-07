@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'scoring/css/board_score.css' %}" />
+{% endblock extra_head %}
 
 {% block content %}
 {% if messages %}
@@ -9,50 +14,56 @@
 </ul>
 {% endif %}
 
-<form action="#" method="post">
-  <!-- CSRF toke tag for POST forms targeted at internal urls. -->
-  {% csrf_token %}
-  <fieldset>
-    <legend><h1>{{ game.name }}</h1></legend>
-    <!-- Display error message if any. -->
-    {% if error_message %}
-    <p><strong>{{ error_message }}</strong></p>
-    {% endif %}
-    <!-- Show list of choices. -->
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col"></th>
-          {% for scorer in scorers %}
-            <th scope="col">{{ scorer }}</th>
+<div class="text-center mt-2">
+  <form action="#" method="post">
+    <!-- CSRF toke tag for POST forms targeted at internal urls. -->
+    {% csrf_token %}
+    <fieldset>
+      <legend><span>Table #{{ board.pk }} for game {{ game.name }}</span></legend>
+      <!-- Display error message if any. -->
+      {% if error_message %}
+      <p><strong>{{ error_message }}</strong></p>
+      {% endif %}
+      <!-- Show list of choices. -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            {% for scorer in scorers %}
+              <th scope="col" class="scorer-label">{{ scorer.name }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for scoring_category in scoring_categories %}
+          <tr>
+            <th scope="row" class="scoring-category-label">{{ scoring_category.name }}</th>
+            {% for scorer in scorers %}
+            <th scope="row">
+              <div class="score-container d-flex justify-content-center">
+                <input
+                  type="number"
+                  name="score-{{ scoring_category.pk }}-{{ scorer.pk }}"
+                  id="score-{{ scoring_category.pk }}-{{ scorer.pk }}"
+                />
+              </div>
+            </th>
+            {% endfor %}
+          </tr>
           {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for scoring_category in scoring_categories %}
-        <tr>
-          <th scope="row">{{ scoring_category.name }}</th>
-          {% for scorer in scorers %}
-          <th scope="row">
-            <input
-              type="number"
-              name="score-{{ scoring_category.pk }}-{{ scorer.pk }}"
-              id="score-{{ scoring_category.pk }}-{{ scorer.pk }}"
-            />
-          </th>
-          {% endfor %}
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </fieldset>
-  <input type="submit" value="Save" />
-</form>
+        </tbody>
+      </table>
+    </fieldset>
+    <button value="Save" class="btn btn-primary"/>Save</button>
+  </form>
+</div>
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBoardModal">
-  Delete Board
-</button>
+<div class="text-center mt-3">
+  <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteBoardModal">
+    Delete Board
+  </button>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="deleteBoardModal" tabindex="-1" aria-labelledby="deleteBoardModalLabel" aria-hidden="true">
