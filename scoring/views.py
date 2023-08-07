@@ -148,52 +148,50 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
         board_pk = int(game_name_or_board_pk)
         board = get_object_or_404(Board, pk=board_pk)
         game = board.game
-        game_name = game.name
     except ValueError as exc:
         game_name = game_name_or_board_pk
         clean_game_name = Game.get_clean_name(game_name)
         game = Game.objects.filter(name=clean_game_name).first()
         board = Board(game=game, player=request.user.player)
-        board.save()
-        board_pk = board.pk
 
     if not game:
         messages.error(request, f"Game {game_name} not found.")
         return HttpResponseRedirect(reverse("scoring:index"))
 
     if request.method == "POST":
+        if board.pk is None:
+            # A new board is being created
+            board.save()
+        game = board.game
         formset = AddScorersFormSet(request.POST, instance=board)
         if formset.is_valid():
             # Create a new board:
             for form in formset:
                 if "name" not in form.cleaned_data:
                     continue
-                scorer_name = form.cleaned_data["name"]
-                scorer = Scorer(
-                    name=scorer_name,
-                    board=board,
-                )
+                scorer: Scorer = form.instance
                 scorer.save()
 
             if request.POST.get("save_and_add_more"):
-                return HttpResponseRedirect(reverse("scoring:add_board_players", args=(str(board_pk),)))
+                return HttpResponseRedirect(reverse("scoring:add_board_players", args=(str(board.pk),)))
             else: # save_and_exit
                 messages.info(request, f"Success creating board {board_pk} with players {board.scorer_set.all()}")
-                return HttpResponseRedirect(reverse("scoring:index"))
+                return HttpResponseRedirect(reverse("scoring:boards_list"))
 
-    else:
+    else:  # GET
         formset = AddScorersFormSet(instance=board)
 
     context = {
-        "board_pk": board_pk,
-        "game_name": game_name,
+        "game_name": game.name,
         "formset": formset,
-        "helper": AddScorersFormSetHelper(board_pk=board_pk),
+        "helper": AddScorersFormSetHelper(
+            game_name_or_board_pk=str(board.pk) if board.pk is not None else game.name
+        ),
     }
 
     return render(
         request,
-        "scoring/edit_game.html",
+        "scoring/add_board_players.html",
         context,
     )
 

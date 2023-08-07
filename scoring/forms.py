@@ -95,11 +95,11 @@ AddScorersFormSet = inlineformset_factory(Board, Scorer, fields=["name"])
 
 class AddScorersFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
-        board_pk = kwargs.pop("board_pk")
+        game_name_or_board_pk = kwargs.pop("game_name_or_board_pk")
         super().__init__(*args, **kwargs)
 
         self.form_method = "post"
-        self.form_action = reverse("scoring:add_board_players", args=(str(board_pk),))
+        self.form_action = reverse("scoring:add_board_players", args=(game_name_or_board_pk,))
 
         self.field_class = "form-floating"
 
