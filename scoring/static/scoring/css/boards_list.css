@@ -1,0 +1,7 @@
+.trash-icon {
+  position: absolute;
+  right: 1em;
+  top: 0.5em;
+  z-index: 1;
+  text-align: center;
+}

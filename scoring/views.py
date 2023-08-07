@@ -207,17 +207,28 @@ def boards_list(request: HttpRequest):
     template = loader.get_template("scoring/boards_list.html")
     return HttpResponse(template.render(context, request))
 
-
-def score(request: HttpRequest, game_name: str):
-    template = loader.get_template(f"scoring/score.html")
-    game = Game.objects.get(name=game_name)
+@login_required
+def board_score(request: HttpRequest, board_pk: int):
+    board = get_object_or_404(Board, pk=board_pk)
+    game = board.game
     scoring_categories = game.scoringcategory_set.all()
+    scorers = board.scorer_set.all()
+    template = loader.get_template(f"scoring/board_score.html")
     context = {
+        "board": board,
         "game": game,
         "scoring_categories": scoring_categories,
+        "scorers": scorers,
     }
     return HttpResponse(template.render(context, request))
 
+@login_required
+@require_POST
+def delete_board(request: HttpRequest, board_pk: int):
+    board = get_object_or_404(Board, pk=board_pk)
+    board.delete()
+    messages.info(request, f"Board {board_pk} deleted.")
+    return HttpResponseRedirect(reverse("scoring:boards_list"))
 
 def save(request: HttpRequest, game_name: str):
     messages.debug(request, "Score saved.")
