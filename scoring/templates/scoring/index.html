@@ -17,7 +17,9 @@
   {% endif %}
 
   <div class="buttons-container">
-    <button class="btn btn-primary" type="button">See Scores</button>
+    <a href="{% url "scoring:boards_list" %}">
+      <button class="btn btn-primary w-100" type="button">See Scores</button>
+    </a>
     <a href="{% url "scoring:add_board" %}">
       <button class="btn btn-primary mt-3 w-100" type="button">Start New Score</button>
     </a>

@@ -197,6 +197,16 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
         context,
     )
 
+@login_required
+def boards_list(request: HttpRequest):
+    player = request.user.player
+    boards = player.board_set.all()
+    context = {
+        "boards": boards,
+    }
+    template = loader.get_template("scoring/boards_list.html")
+    return HttpResponse(template.render(context, request))
+
 
 def score(request: HttpRequest, game_name: str):
     template = loader.get_template(f"scoring/score.html")
