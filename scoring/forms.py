@@ -93,6 +93,19 @@ ScoringCategoryFormSet.is_valid = scoring_category_formset_is_valid
 
 AddScorersFormSet = inlineformset_factory(Board, Scorer, fields=["name"])
 
+def add_scorers_formset_is_valid(formset, *args, **kwargs):
+    forms_with_name = []
+    for form in formset:
+        if not form["name"].value():
+            if form.instance.pk is not None:
+                form.instance.delete()
+            continue
+        forms_with_name.append(form)
+    formset.forms = forms_with_name
+    return super(AddScorersFormSet, formset).is_valid(*args, **kwargs)
+
+AddScorersFormSet.is_valid = add_scorers_formset_is_valid
+
 class AddScorersFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         game_name_or_board_pk = kwargs.pop("game_name_or_board_pk")
