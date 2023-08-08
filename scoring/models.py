@@ -67,6 +67,7 @@ class Board(models.Model):
 
 class Scorer(models.Model):
     name = models.CharField(max_length=50)
+    display_name = models.CharField(max_length=5)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
 
     def __str__(self):
