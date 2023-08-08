@@ -242,9 +242,11 @@ def board_score(request: HttpRequest, board_pk: int):
     scorers = board.scorer_set.all()
     template = loader.get_template(f"scoring/board_score.html")
     score_values = {}
-    for scoring_category in scoring_categories:
-        score_values[scoring_category.pk] = {}
-        for scorer in scorers:
+    totals = {}
+    for scorer in scorers:
+        score_values[scorer.pk] = {}
+        totals[scorer.pk] = 0
+        for scoring_category in scoring_categories:
             score_key = f"score-{scoring_category.pk}-{scorer.pk}"
             score = Score.objects.filter(
                 board_id=board_pk,
@@ -255,13 +257,15 @@ def board_score(request: HttpRequest, board_pk: int):
                 score_value = score.value
             else:
                 score_value = 0
-            score_values[scoring_category.pk][scorer.pk] = score_value
+            score_values[scorer.pk][scoring_category.pk] = score_value
+            totals[scorer.pk] += score_value
     context = {
         "board": board,
         "game": game,
         "scoring_categories": scoring_categories,
         "scorers": scorers,
         "score_values": score_values,
+        "totals": totals,
     }
     return HttpResponse(template.render(context, request))
 

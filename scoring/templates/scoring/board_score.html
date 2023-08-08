@@ -36,6 +36,7 @@
           </tr>
         </thead>
         <tbody>
+          {% comment %} Rows for scoring categories score values {% endcomment %}
           {% for scoring_category in scoring_categories %}
           <tr>
             <th scope="row" class="scoring-category-label">{{ scoring_category.name }}</th>
@@ -46,13 +47,30 @@
                   type="number"
                   name="score-{{ scoring_category.pk }}-{{ scorer.pk }}"
                   id="score-{{ scoring_category.pk }}-{{ scorer.pk }}"
-                  value="{{ score_values|get_from_dict:scoring_category.pk|get_from_dict:scorer.pk }}",
+                  value="{{ score_values|get_from_dict:scorer.pk|get_from_dict:scoring_category.pk }}",
                 />
               </div>
             </th>
             {% endfor %}
           </tr>
           {% endfor %}
+          {% comment %} Row for totals {% endcomment %}
+          <tr>
+            <th scope="row" class="scoring-category-label">Total</th>
+            {% for scorer in scorers %}
+            <th scope="row">
+              <div class="score-container d-flex justify-content-center">
+                <input
+                  type="number"
+                  disabled
+                  name="score-total-{{ scorer.pk }}"
+                  id="score-total-{{ scorer.pk }}"
+                  value="{{ totals|get_from_dict:scorer.pk }}",
+                />
+              </div>
+            </th>
+            {% endfor %}
+          </tr>
         </tbody>
       </table>
     </fieldset>
