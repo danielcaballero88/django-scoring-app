@@ -1,13 +1,13 @@
 from crispy_bootstrap5.bootstrap5 import FloatingField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit
-from django.forms import ModelForm, inlineformset_factory
+from django import forms
 from django.urls import reverse
 
-from .models import Board, Game, Player, Scorer, ScoringCategory
+from .models import Board, Game, Player, Scorer, ScoringCategory, Score
 
 
-class ProfileForm(ModelForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
         model = Player
         exclude = ["user"]
@@ -30,7 +30,7 @@ class ProfileForm(ModelForm):
         )
 
 
-class AddGameForm(ModelForm):
+class AddGameForm(forms.ModelForm):
     class Meta:
         model = Game
         fields = "__all__"
@@ -64,7 +64,7 @@ class AddGameForm(ModelForm):
         return cleaned_data
 
 
-ScoringCategoryFormSet = inlineformset_factory(Game, ScoringCategory, fields=["name"])
+ScoringCategoryFormSet = forms.inlineformset_factory(Game, ScoringCategory, fields=["name"])
 
 
 class ScoringCategoryFormSetHelper(FormHelper):
@@ -109,7 +109,7 @@ def scoring_category_formset_is_valid(formset, *args, **kwargs):
 ScoringCategoryFormSet.is_valid = scoring_category_formset_is_valid
 
 
-AddScorersFormSet = inlineformset_factory(Board, Scorer, fields=["name"])
+AddScorersFormSet = forms.inlineformset_factory(Board, Scorer, fields=["name"])
 
 
 def add_scorers_formset_is_valid(formset, *args, **kwargs):
@@ -157,3 +157,18 @@ class AddScorersFormSetHelper(FormHelper):
                 css_class="w-100 btn btn-lg btn-primary",
             )
         )
+
+
+class AddYourScorerForm(forms.ModelForm):
+    class Meta:
+        model = Scorer
+        fields = ("name",)
+        labels = {
+            "name": "Your name",
+        }
+
+
+class AddYourScoreValueForm(forms.ModelForm):
+    class Meta:
+        model = Score
+        fields = ("value",)

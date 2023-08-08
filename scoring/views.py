@@ -13,6 +13,8 @@ from .forms import (
     ProfileForm,
     ScoringCategoryFormSet,
     ScoringCategoryFormSetHelper,
+    AddYourScorerForm,
+    AddYourScoreValueForm,
 )
 from .models import Board, Game, Player, Score, Scorer, ScoringCategory
 
@@ -283,6 +285,46 @@ def delete_board(request: HttpRequest, board_pk: int):
     return HttpResponseRedirect(reverse("scoring:boards_list"))
 
 
-def save(request: HttpRequest, game_name: str):
-    messages.debug(request, "Score saved.")
-    return HttpResponseRedirect(reverse("scoring:index"))
+def add_your_score(request: HttpRequest, board_pk: int):
+    board = get_object_or_404(Board, pk=board_pk)
+    scoring_categories = board.game.scoringcategory_set.all()
+
+    if request.method == "POST":
+        scorer_form = AddYourScorerForm(request.POST)
+        if scorer_form.is_valid():
+            scorer = Scorer(
+                name=scorer_form.cleaned_data["name"],
+                board=board,
+            )
+            scorer.save()
+        # check also scoring categories form and continue to process POST request...
+        for sc in scoring_categories:
+            value = request.POST[f"value-{sc.pk}"]
+            score = Score(
+                board=board,
+                scorer=scorer,
+                scoring_category=sc,
+                value=value,
+            )
+            score.save()
+        messages.info(request, "Thanks for providing your score!")
+        return HttpResponseRedirect(reverse("scoring:index"))
+
+    scorer_form = AddYourScorerForm()
+    scoring_category_forms = []
+    for scoring_category in scoring_categories:
+        sc_form_dict = {
+            "form": AddYourScoreValueForm(),
+            "label": scoring_category.name,
+            "value_field_name": f"value-{scoring_category.pk}",
+        }
+        scoring_category_forms.append(sc_form_dict)
+
+    template = loader.get_template("scoring/add_your_score.html")
+    context = {
+        "board_pk": board_pk,
+        "scorer_form": scorer_form,
+        "scoring_category_forms": scoring_category_forms,
+    }
+
+    return HttpResponse(template.render(context, request))
