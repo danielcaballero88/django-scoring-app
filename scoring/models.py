@@ -75,8 +75,8 @@ class Scorer(models.Model):
 
 class Score(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
-    scorer = models.ForeignKey(Scorer, on_delete=models.RESTRICT)
-    scoring_category = models.ForeignKey(ScoringCategory, on_delete=models.RESTRICT)
+    scorer = models.ForeignKey(Scorer, on_delete=models.CASCADE)
+    scoring_category = models.ForeignKey(ScoringCategory, on_delete=models.CASCADE)
     value = models.IntegerField(default=0)
 
     def __str__(self):
