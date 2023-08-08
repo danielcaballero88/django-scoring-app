@@ -9,7 +9,8 @@
 {% block content %}
 <div class="text-center">
   <div class="form-signin">
-    <h1 class="h3 mb-3 fw-normal">Add Board Players:</h1>
+    <h1 class="h3 mb-0 fw-normal">Add Board Players:</h1>
+    <p class="small-text mb-3">(...and remove players by leaving names blank)</p>
     {% crispy formset helper %}
   </div>
 {% endblock content %}

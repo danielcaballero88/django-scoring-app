@@ -175,8 +175,7 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
             if request.POST.get("save_and_add_more"):
                 return HttpResponseRedirect(reverse("scoring:add_board_players", args=(str(board.pk),)))
             else: # save_and_exit
-                messages.info(request, f"Success creating board {board_pk} with players {board.scorer_set.all()}")
-                return HttpResponseRedirect(reverse("scoring:boards_list"))
+                return HttpResponseRedirect(reverse("scoring:board_score", args=(str(board.pk),)))
 
     else:  # GET
         formset = AddScorersFormSet(instance=board)
@@ -234,7 +233,6 @@ def board_score(request: HttpRequest, board_pk: int):
                 value = 0
             score.value = value
             score.save()
-        messages.info(request, f"Save success for board {board.pk}.")
         return HttpResponseRedirect(reverse("scoring:board_score", args=(board_pk,)))
 
     game = board.game
