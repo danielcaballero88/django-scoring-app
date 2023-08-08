@@ -1,0 +1,10 @@
+.buttons-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.buttons-container button {
+  min-height: 5em;
+}

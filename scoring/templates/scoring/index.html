@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'scoring/css/index.css' %}" />
+{% endblock extra_head %}
 
 {% block content %}
 <div class="container mt-1">
@@ -11,18 +16,13 @@
   </ul>
   {% endif %}
 
-  <div class="alert alert-primary" role="alert">
-    Hello, world. You're at the scoring app index.
-  </div>
-
-  <div class="list-group">
-    {% for game in games %}
-    <a
-      href="{% url 'scoring:score' game.name %}"
-      class="list-group-item list-group-item-action">
-        {{ game.name }}
+  <div class="buttons-container">
+    <a href="{% url "scoring:boards_list" %}">
+      <button class="btn btn-primary w-100" type="button">See Scores</button>
     </a>
-    {% endfor %}
+    <a href="{% url "scoring:add_board" %}">
+      <button class="btn btn-primary mt-3 w-100" type="button">Start New Score</button>
+    </a>
   </div>
 
 </div>

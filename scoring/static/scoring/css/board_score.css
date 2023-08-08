@@ -1,0 +1,13 @@
+.scorer-label {
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.scoring-category-label {
+  font-size: 0.7rem;
+  font-weight: normal;
+}
+
+input {
+  width: 3em;
+}

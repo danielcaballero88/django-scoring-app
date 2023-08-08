@@ -10,6 +10,10 @@ urlpatterns = [
     path("add_game/", views.add_game, name="add_game"),
     path("edit_game/<str:game_name>/", views.edit_game, name="edit_game"),
     path("delete_game/<str:game_name>/", views.delete_game, name="delete_game"),
-    path("score/<str:game_name>/", views.score, name="score"),
-    path("save/<str:game_name>/", views.save, name="save"),
+    path("add_board", views.add_board, name="add_board"),
+    path("add_board_players/<str:game_name_or_board_pk>/", views.add_board_players, name="add_board_players"),
+    path("boards_list/", views.boards_list, name="boards_list"),
+    path("delete_board/<int:board_pk>/", views.delete_board, name="delete_board"),
+    path("board_score/<int:board_pk>/", views.board_score, name="board_score"),
+    # path("save/<str:game_name>/", views.save, name="save"),
 ]

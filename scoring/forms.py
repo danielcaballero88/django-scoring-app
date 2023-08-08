@@ -1,10 +1,10 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
 from crispy_bootstrap5.bootstrap5 import FloatingField
-from django.forms import ModelForm, Form, inlineformset_factory
+from django.forms import ModelForm, inlineformset_factory, modelform_factory
 from django.urls import reverse
 
-from .models import Player, Game, ScoringCategory
+from .models import Player, Game, ScoringCategory, Board, Scorer
 
 
 class ProfileForm(ModelForm):
@@ -89,3 +89,36 @@ def scoring_category_formset_is_valid(formset, *args, **kwargs):
     return super(ScoringCategoryFormSet, formset).is_valid(*args, **kwargs)
 
 ScoringCategoryFormSet.is_valid = scoring_category_formset_is_valid
+
+
+AddScorersFormSet = inlineformset_factory(Board, Scorer, fields=["name"])
+
+def add_scorers_formset_is_valid(formset, *args, **kwargs):
+    forms_with_name = []
+    for form in formset:
+        if not form["name"].value():
+            if form.instance.pk is not None:
+                form.instance.delete()
+            continue
+        forms_with_name.append(form)
+    formset.forms = forms_with_name
+    return super(AddScorersFormSet, formset).is_valid(*args, **kwargs)
+
+AddScorersFormSet.is_valid = add_scorers_formset_is_valid
+
+class AddScorersFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        game_name_or_board_pk = kwargs.pop("game_name_or_board_pk")
+        super().__init__(*args, **kwargs)
+
+        self.form_method = "post"
+        self.form_action = reverse("scoring:add_board_players", args=(game_name_or_board_pk,))
+
+        self.field_class = "form-floating"
+
+        self.layout = Layout(
+            FloatingField("name"),
+        )
+
+        self.add_input(Submit("save_and_add_more", "Save and add more", css_class='w-100 btn btn-lg btn-primary'))
+        self.add_input(Submit("save_and_exit", "Save and exit", css_class='w-100 btn btn-lg btn-primary'))
