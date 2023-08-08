@@ -70,6 +70,10 @@ class Scorer(models.Model):
     display_name = models.CharField(max_length=5)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        self.display_name = self.name[:3]
+        super().save(*args, *kwargs)
+
     def __str__(self):
         return f"Scorer: {self.name}"
 
