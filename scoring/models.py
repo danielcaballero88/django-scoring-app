@@ -1,7 +1,9 @@
+import re
+
 from django.db import models
+
 from accounts.models import User
 
-import re
 
 class Player(models.Model):
     class Role(models.TextChoices):

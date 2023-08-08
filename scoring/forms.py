@@ -1,14 +1,13 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout
 from crispy_bootstrap5.bootstrap5 import FloatingField
-from django.forms import ModelForm, inlineformset_factory, modelform_factory
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit
+from django.forms import ModelForm, inlineformset_factory
 from django.urls import reverse
 
-from .models import Player, Game, ScoringCategory, Board, Scorer
+from .models import Board, Game, Player, Scorer, ScoringCategory
 
 
 class ProfileForm(ModelForm):
-
     class Meta:
         model = Player
         exclude = ["user"]
@@ -26,7 +25,9 @@ class ProfileForm(ModelForm):
             FloatingField("displayname"),
         )
 
-        self.helper.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
+        self.helper.add_input(
+            Submit("save", "Save", css_class="w-100 btn btn-lg btn-primary")
+        )
 
 
 class AddGameForm(ModelForm):
@@ -47,7 +48,9 @@ class AddGameForm(ModelForm):
             FloatingField("name"),
         )
 
-        self.helper.add_input(Submit("save", "Save", css_class='w-100 btn btn-lg btn-primary'))
+        self.helper.add_input(
+            Submit("save", "Save", css_class="w-100 btn btn-lg btn-primary")
+        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -63,6 +66,7 @@ class AddGameForm(ModelForm):
 
 ScoringCategoryFormSet = inlineformset_factory(Game, ScoringCategory, fields=["name"])
 
+
 class ScoringCategoryFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
         game_name = kwargs.pop("game_name")
@@ -77,8 +81,21 @@ class ScoringCategoryFormSetHelper(FormHelper):
             FloatingField("name"),
         )
 
-        self.add_input(Submit("save_and_add_more", "Save and add more", css_class='w-100 btn btn-lg btn-primary'))
-        self.add_input(Submit("save_and_exit", "Save and exit", css_class='w-100 btn btn-lg btn-primary'))
+        self.add_input(
+            Submit(
+                "save_and_add_more",
+                "Save and add more",
+                css_class="w-100 btn btn-lg btn-primary",
+            )
+        )
+        self.add_input(
+            Submit(
+                "save_and_exit",
+                "Save and exit",
+                css_class="w-100 btn btn-lg btn-primary",
+            )
+        )
+
 
 def scoring_category_formset_is_valid(formset, *args, **kwargs):
     # Only keep forms with data: this can be undesired when emptying existing values
@@ -88,10 +105,12 @@ def scoring_category_formset_is_valid(formset, *args, **kwargs):
     formset.forms = [form for form in formset if form["name"].value()]
     return super(ScoringCategoryFormSet, formset).is_valid(*args, **kwargs)
 
+
 ScoringCategoryFormSet.is_valid = scoring_category_formset_is_valid
 
 
 AddScorersFormSet = inlineformset_factory(Board, Scorer, fields=["name"])
+
 
 def add_scorers_formset_is_valid(formset, *args, **kwargs):
     forms_with_name = []
@@ -104,7 +123,9 @@ def add_scorers_formset_is_valid(formset, *args, **kwargs):
     formset.forms = forms_with_name
     return super(AddScorersFormSet, formset).is_valid(*args, **kwargs)
 
+
 AddScorersFormSet.is_valid = add_scorers_formset_is_valid
+
 
 class AddScorersFormSetHelper(FormHelper):
     def __init__(self, *args, **kwargs):
@@ -112,7 +133,9 @@ class AddScorersFormSetHelper(FormHelper):
         super().__init__(*args, **kwargs)
 
         self.form_method = "post"
-        self.form_action = reverse("scoring:add_board_players", args=(game_name_or_board_pk,))
+        self.form_action = reverse(
+            "scoring:add_board_players", args=(game_name_or_board_pk,)
+        )
 
         self.field_class = "form-floating"
 
@@ -120,5 +143,17 @@ class AddScorersFormSetHelper(FormHelper):
             FloatingField("name"),
         )
 
-        self.add_input(Submit("save_and_add_more", "Save and add more", css_class='w-100 btn btn-lg btn-primary'))
-        self.add_input(Submit("save_and_exit", "Save and exit", css_class='w-100 btn btn-lg btn-primary'))
+        self.add_input(
+            Submit(
+                "save_and_add_more",
+                "Save and add more",
+                css_class="w-100 btn btn-lg btn-primary",
+            )
+        )
+        self.add_input(
+            Submit(
+                "save_and_exit",
+                "Save and exit",
+                css_class="w-100 btn btn-lg btn-primary",
+            )
+        )

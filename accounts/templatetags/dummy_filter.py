@@ -3,7 +3,8 @@ from django.forms.boundfield import BoundField
 
 register = template.Library()
 
-@register.filter('dummy')
+
+@register.filter("dummy")
 def dummy(element: BoundField) -> BoundField:
     """Dummy filter for debugging.
 

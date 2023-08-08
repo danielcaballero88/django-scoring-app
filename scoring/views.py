@@ -1,14 +1,20 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-
-from .forms import ProfileForm, AddGameForm, ScoringCategoryFormSet, ScoringCategoryFormSetHelper, AddScorersFormSet, AddScorersFormSetHelper
-from .models import Game, Player, ScoringCategory, Board, Scorer, Score
+from .forms import (
+    AddGameForm,
+    AddScorersFormSet,
+    AddScorersFormSetHelper,
+    ProfileForm,
+    ScoringCategoryFormSet,
+    ScoringCategoryFormSetHelper,
+)
+from .models import Board, Game, Player, Score, Scorer, ScoringCategory
 
 
 def index(request: HttpRequest):
@@ -17,9 +23,7 @@ def index(request: HttpRequest):
             return HttpResponseRedirect(reverse("scoring:profile"))
 
     template = loader.get_template("scoring/index.html")
-    context = {
-        "games": Game.objects.all()
-    }
+    context = {"games": Game.objects.all()}
     return HttpResponse(template.render(context, request))
 
 
@@ -28,10 +32,7 @@ def profile(request: HttpRequest):
     # If the user doesn't have yet a player, we need to create one now.
     player = getattr(request.user, "player", None)
     if not player:
-        player = Player(
-            displayname=request.user.username,
-            user=request.user
-        )
+        player = Player(displayname=request.user.username, user=request.user)
         player.save()
 
     if request.method == "POST":
@@ -59,9 +60,7 @@ def profile(request: HttpRequest):
 @login_required
 def edit_games(request: HttpRequest):
     template = loader.get_template("scoring/edit_games.html")
-    context = {
-        "games": Game.objects.all()
-    }
+    context = {"games": Game.objects.all()}
     return HttpResponse(template.render(context, request))
 
 
@@ -106,8 +105,10 @@ def edit_game(request: HttpRequest, game_name: str):
                 sc.save()
 
             if request.POST.get("save_and_add_more"):
-                return HttpResponseRedirect(reverse("scoring:edit_game", args=(game_name,)))
-            else: # save_and_exit
+                return HttpResponseRedirect(
+                    reverse("scoring:edit_game", args=(game_name,))
+                )
+            else:  # save_and_exit
                 return HttpResponseRedirect(reverse("scoring:edit_games"))
 
     else:
@@ -125,6 +126,7 @@ def edit_game(request: HttpRequest, game_name: str):
         context,
     )
 
+
 @login_required
 @require_POST
 def delete_game(request: HttpRequest, game_name: str):
@@ -136,9 +138,7 @@ def delete_game(request: HttpRequest, game_name: str):
 @login_required
 def add_board(request: HttpRequest):
     template = loader.get_template(f"scoring/add_board.html")
-    context = {
-        "games": Game.objects.all()
-    }
+    context = {"games": Game.objects.all()}
     return HttpResponse(template.render(context, request))
 
 
@@ -173,9 +173,13 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
                 scorer.save()
 
             if request.POST.get("save_and_add_more"):
-                return HttpResponseRedirect(reverse("scoring:add_board_players", args=(str(board.pk),)))
-            else: # save_and_exit
-                return HttpResponseRedirect(reverse("scoring:board_score", args=(str(board.pk),)))
+                return HttpResponseRedirect(
+                    reverse("scoring:add_board_players", args=(str(board.pk),))
+                )
+            else:  # save_and_exit
+                return HttpResponseRedirect(
+                    reverse("scoring:board_score", args=(str(board.pk),))
+                )
 
     else:  # GET
         formset = AddScorersFormSet(instance=board)
@@ -194,6 +198,7 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
         context,
     )
 
+
 @login_required
 def boards_list(request: HttpRequest):
     player = request.user.player
@@ -204,6 +209,7 @@ def boards_list(request: HttpRequest):
     template = loader.get_template("scoring/boards_list.html")
     return HttpResponse(template.render(context, request))
 
+
 @login_required
 def board_score(request: HttpRequest, board_pk: int):
     board = get_object_or_404(Board, pk=board_pk)
@@ -212,7 +218,7 @@ def board_score(request: HttpRequest, board_pk: int):
         score_keys = (key for key in request.POST if key.startswith("score"))
         for score_key in score_keys:
             score_key_parts = score_key.split("-")
-            scoring_category_pk= int(score_key_parts[1])
+            scoring_category_pk = int(score_key_parts[1])
             scorer_pk = int(score_key_parts[2])
             score = Score.objects.filter(
                 board_id=board_pk,
@@ -224,7 +230,7 @@ def board_score(request: HttpRequest, board_pk: int):
                     board_id=board_pk,
                     scorer_id=scorer_pk,
                     scoring_category_id=scoring_category_pk,
-                    value = 0,
+                    value=0,
                 )
             value_str = request.POST[score_key]
             if value_str:
@@ -267,6 +273,7 @@ def board_score(request: HttpRequest, board_pk: int):
     }
     return HttpResponse(template.render(context, request))
 
+
 @login_required
 @require_POST
 def delete_board(request: HttpRequest, board_pk: int):
@@ -274,6 +281,7 @@ def delete_board(request: HttpRequest, board_pk: int):
     board.delete()
     messages.info(request, f"Board {board_pk} deleted.")
     return HttpResponseRedirect(reverse("scoring:boards_list"))
+
 
 def save(request: HttpRequest, game_name: str):
     messages.debug(request, "Score saved.")

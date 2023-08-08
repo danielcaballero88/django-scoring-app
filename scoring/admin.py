@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .models import Game, Player, ScoringCategory, Board, Scorer
-
+from .models import Board, Game, Player, Scorer, ScoringCategory
 
 
 class ScoringCategoryInLine(admin.TabularInline):
@@ -9,9 +8,8 @@ class ScoringCategoryInLine(admin.TabularInline):
     extra = 1
 
 
-
 class GameAdmin(admin.ModelAdmin):
-    inlines= [ScoringCategoryInLine]
+    inlines = [ScoringCategoryInLine]
 
 
 class BoardInLine(admin.TabularInline):

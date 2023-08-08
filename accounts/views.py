@@ -1,13 +1,15 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login as django_login, logout as django_logout
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .forms import LoginForm, RegisterForm, InviteForm
-from .models import User, InvitedUser
+from .forms import InviteForm, LoginForm, RegisterForm
+from .models import InvitedUser, User
 from .signals import user_registration_signal
 
 
@@ -75,8 +77,8 @@ def register(request):
             user.save()
             messages.success(request, f"User {username} was registered correctly.")
             user_registration_signal.send(
-                sender = __name__,
-                user = user,
+                sender=__name__,
+                user=user,
             )
             # redirect to a new URL:
             return HttpResponseRedirect(reverse("accounts:login"))

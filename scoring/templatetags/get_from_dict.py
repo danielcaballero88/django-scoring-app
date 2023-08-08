@@ -3,7 +3,8 @@ from django.forms.boundfield import BoundField
 
 register = template.Library()
 
-@register.filter('get_from_dict')
+
+@register.filter("get_from_dict")
 def get_from_dict(value, arg) -> BoundField:
     """Filter to get a value from a dictionary
 

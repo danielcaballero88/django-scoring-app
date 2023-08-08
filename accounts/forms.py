@@ -1,21 +1,28 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout
 from crispy_bootstrap5.bootstrap5 import FloatingField
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit
 from django import forms
 from django.core.exceptions import ValidationError
 
 from .models import InvitedUser, User
 
+
 class LoginForm(forms.Form):
     username = forms.CharField(label="Username", max_length=100)
-    password = forms.CharField(label="Password", max_length=50, widget=forms.PasswordInput)
+    password = forms.CharField(
+        label="Password", max_length=50, widget=forms.PasswordInput
+    )
 
 
 class RegisterForm(forms.Form):
     username = forms.CharField(label="Username", max_length=100)
     email = forms.EmailField(label="Email", max_length=100)
-    password = forms.CharField(label="Password", max_length=50, widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Repeat password", max_length=50, widget=forms.PasswordInput)
+    password = forms.CharField(
+        label="Password", max_length=50, widget=forms.PasswordInput
+    )
+    password2 = forms.CharField(
+        label="Repeat password", max_length=50, widget=forms.PasswordInput
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,7 +37,9 @@ class RegisterForm(forms.Form):
             FloatingField("username", "email", "password", "password2"),
         )
 
-        self.helper.add_input(Submit("register", "Register", css_class='w-100 btn btn-lg btn-primary'))
+        self.helper.add_input(
+            Submit("register", "Register", css_class="w-100 btn btn-lg btn-primary")
+        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -61,7 +70,6 @@ class RegisterForm(forms.Form):
         return cleaned_data
 
 
-
 class InviteForm(forms.Form):
     invited_email = forms.EmailField(label="Email", max_length=100)
     repeat_email = forms.EmailField(label="Repeat Email", max_length=100)
@@ -79,7 +87,9 @@ class InviteForm(forms.Form):
             FloatingField("invited_email", "repeat_email"),
         )
 
-        self.helper.add_input(Submit("invite", "Invite", css_class='w-100 btn btn-lg btn-primary'))
+        self.helper.add_input(
+            Submit("invite", "Invite", css_class="w-100 btn btn-lg btn-primary")
+        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -90,7 +100,9 @@ class InviteForm(forms.Form):
             return cleaned_data
 
         # Check if this email is already invited.
-        invited_user = InvitedUser.objects.filter(invited_email=cleaned_data["invited_email"])
+        invited_user = InvitedUser.objects.filter(
+            invited_email=cleaned_data["invited_email"]
+        )
         if invited_user:
             raise ValidationError(
                 "Email %(invited_email)s is already invited",
