@@ -74,23 +74,6 @@ class InviteForm(forms.Form):
     invited_email = forms.EmailField(label="Email", max_length=100)
     repeat_email = forms.EmailField(label="Repeat Email", max_length=100)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_method = "post"
-        self.helper.form_action = "accounts:invite"
-
-        self.helper.field_class = "form-floating"
-
-        self.helper.layout = Layout(
-            FloatingField("invited_email", "repeat_email"),
-        )
-
-        self.helper.add_input(
-            Submit("invite", "Invite", css_class="w-100 btn btn-lg btn-primary")
-        )
-
     def clean(self):
         cleaned_data = super().clean()
         if cleaned_data["invited_email"] != cleaned_data["repeat_email"]:
