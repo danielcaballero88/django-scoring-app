@@ -19,5 +19,5 @@ urlpatterns = [
     path("boards_list/", views.boards_list, name="boards_list"),
     path("delete_board/<int:board_pk>/", views.delete_board, name="delete_board"),
     path("board_score/<int:board_pk>/", views.board_score, name="board_score"),
-    # path("save/<str:game_name>/", views.save, name="save"),
+    path("add_your_score/<int:board_pk>/", views.add_your_score, name="add_your_score"),
 ]

@@ -6,6 +6,8 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from django.forms import Form
+
 from .forms import (
     AddGameForm,
     AddScorersFormSet,
@@ -13,6 +15,9 @@ from .forms import (
     ProfileForm,
     ScoringCategoryFormSet,
     ScoringCategoryFormSetHelper,
+    AddYourScorerForm,
+    AddYourScoreValueForm,
+    add_your_scores_form_factory,
 )
 from .models import Board, Game, Player, Score, Scorer, ScoringCategory
 
@@ -283,6 +288,41 @@ def delete_board(request: HttpRequest, board_pk: int):
     return HttpResponseRedirect(reverse("scoring:boards_list"))
 
 
-def save(request: HttpRequest, game_name: str):
-    messages.debug(request, "Score saved.")
-    return HttpResponseRedirect(reverse("scoring:index"))
+def add_your_score(request: HttpRequest, board_pk: int):
+    # TODO: create links with a jwt token with expiration so it's easy to reject
+    # requests after 5 min. Also make sure to only allow a maximum number of scorers
+    # per board to avoid attacks.
+    board = get_object_or_404(Board, pk=board_pk)
+    scoring_categories = board.game.scoringcategory_set.all()
+    sc_names = [sc.name for sc in scoring_categories]
+    AddYourScoresForm = add_your_scores_form_factory("AddYourScoresForm", sc_names)
+
+    if request.method == "POST":
+        form = AddYourScoresForm(request.POST)
+        if form.is_valid():
+            scorer_name = form.cleaned_data["name"]
+            scorer = Scorer(
+                name=scorer_name,
+                board=board,
+            )
+            scorer.save()
+            for sc in scoring_categories:
+                score_value = form.cleaned_data[sc.name]
+                score = Score(
+                    value=score_value,
+                    board=board,
+                    scorer=scorer,
+                    scoring_category=sc,
+                )
+                score.save()
+            messages.success(request, "Thanks for providing your score!")
+            return HttpResponseRedirect(reverse("scoring:index"))
+
+    form = AddYourScoresForm(board_pk=board_pk)
+    template = loader.get_template("scoring/add_your_score.html")
+    context = {
+        "board_pk": board_pk,
+        "form": form,
+    }
+
+    return HttpResponse(template.render(context, request))
