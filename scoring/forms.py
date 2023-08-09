@@ -172,3 +172,41 @@ class AddYourScoreValueForm(forms.ModelForm):
     class Meta:
         model = Score
         fields = ("value",)
+
+
+def add_your_scores_form_factory(form_name: str, sc_names: list[str]):
+    form_fields = {
+            "name": forms.CharField(max_length=50, label="Your name"),
+        }
+    score_fields = {
+        scoring_category: forms.IntegerField(label=scoring_category)
+        for scoring_category in sc_names
+    }
+    form_fields.update(score_fields)
+    Form = type(
+        form_name,
+        (forms.Form,),
+        form_fields.copy(),  # If I dont provide a copy then the dict is mutated within.
+    )
+
+    def form_init(self, *args, **kwargs):
+        board_pk = kwargs.pop("board_pk", None)
+        super(Form, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+        self.helper.form_method = "post"
+        if board_pk is not None:
+            self.helper.form_action = reverse("scoring:add_your_score", args=(board_pk,))
+
+        self.helper.field_class = "form-floating"
+
+        floating_fields = [FloatingField(field_name) for field_name in form_fields]
+        self.helper.layout = Layout(*floating_fields)
+
+        self.helper.add_input(
+            Submit("save", "Save", css_class="w-100 btn btn-lg btn-primary")
+        )
+
+    Form.__init__ = form_init
+
+    return Form
