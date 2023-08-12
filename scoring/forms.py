@@ -46,7 +46,11 @@ ScoringCategoryFormSet = forms.inlineformset_factory(Game, ScoringCategory, fiel
 
 
 def get_scoring_category_formset(game: Game, post_data = None):
-    formset = ScoringCategoryFormSet(instance=game)
+    if post_data is None:
+        formset = ScoringCategoryFormSet(instance=game)
+    else:
+        formset = ScoringCategoryFormSet(post_data, instance=game)
+    # Add styling
     for form in formset:
         for field_name, field in form.fields.items():
             if field_name == "DELETE":

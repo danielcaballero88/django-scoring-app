@@ -98,7 +98,11 @@ def edit_game(request: HttpRequest, game_name: str):
         return HttpResponseRedirect(reverse("scoring:index"))
 
     if request.method == "POST":
-        formset = ScoringCategoryFormSet(request.POST, instance=game)
+        # formset = ScoringCategoryFormSet(request.POST, instance=game)
+        formset = get_scoring_category_formset(
+            game=game,
+            post_data=request.POST,
+        )
         if formset.is_valid():
             game.scoringcategory_set.all().delete()
             for form in formset:
@@ -118,7 +122,7 @@ def edit_game(request: HttpRequest, game_name: str):
             else:  # save_and_exit
                 return HttpResponseRedirect(reverse("scoring:edit_games"))
 
-    else:
+    else: # GET
         formset = get_scoring_category_formset(game=game)
 
     context = {
