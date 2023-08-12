@@ -7,15 +7,14 @@
     <h1 class="h3 mb-3 fw-normal">Invite a friend:</h1>
       <form action="{% url 'accounts:invite' %}" method="post">
         {% csrf_token %}
-        {{ form.as_div }}
-        {% comment %} {{ form.non_field_errors }}
+        {{ form.non_field_errors }}
         {% for field in form %}
-          <div class="field-wrapper form-floating mb-3">
-            {{ field.errors }}
-            {{ field|add_class:'textinput form-control'|add_placeholder }}
-            {{ field.label_tag }}
-          </div>
-        {% endfor %} {% endcomment %}
+        <div id="div_{{ field.auto_id }}" class="form-floating mb-3">
+          {{ field.errors }}
+          {{ field }}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+        {% endfor %}
         <div class="mb-3">
           <div class="form-floating">
             <input

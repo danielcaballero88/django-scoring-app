@@ -29,3 +29,7 @@ def add_class(element: BoundField, new_classes: str) -> BoundField:
 def add_placeholder(element: BoundField) -> BoundField:
     element.field.widget.attrs["placeholder"] = element.field.label
     return element
+
+def _add_classes(current_classes: str, new_classes: str):
+    classes_list = current_classes.split() + new_classes.split()
+    return " ".join(classes_list)
