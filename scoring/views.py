@@ -14,9 +14,7 @@ from .forms import (
     AddScorersFormSetHelper,
     ProfileForm,
     ScoringCategoryFormSet,
-    ScoringCategoryFormSetHelper,
-    AddYourScorerForm,
-    AddYourScoreValueForm,
+    get_scoring_category_formset,
     add_your_scores_form_factory,
 )
 from .models import Board, Game, Player, Score, Scorer, ScoringCategory
@@ -50,10 +48,14 @@ def profile(request: HttpRequest):
             displayname = form.cleaned_data["displayname"]
             player.displayname = displayname
             player.save()
+            messages.success(
+                request,
+                f"Successfully updated profile for username: {request.user.username}."
+                f" New displayname: {player.displayname}."
+            )
             return HttpResponseRedirect(reverse("scoring:index"))
     else:  # GET
         form = ProfileForm(instance=player)
-        template = loader.get_template("scoring/profile.html")
 
     # This return is not in the else because it will render errors for the POST case.
     context = {
@@ -117,12 +119,11 @@ def edit_game(request: HttpRequest, game_name: str):
                 return HttpResponseRedirect(reverse("scoring:edit_games"))
 
     else:
-        formset = ScoringCategoryFormSet(instance=game)
+        formset = get_scoring_category_formset(game=game)
 
     context = {
         "game_name": game_name,
         "formset": formset,
-        "helper": ScoringCategoryFormSetHelper(game_name=game_name),
     }
 
     return render(

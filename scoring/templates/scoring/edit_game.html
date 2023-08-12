@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
 {% load static %}
+{% load dummy_filter %}
 
 {% block extra_head %}
   <link rel="stylesheet" type="text/css" href="{% static 'scoring/css/forms.css' %}" />
@@ -10,7 +10,37 @@
 <div class="text-center">
   <div class="form-signin">
     <h1 class="h3 mb-3 fw-normal">Edit game: {{ game_name }}</h1>
-    {% crispy formset helper %}
+    <form action="{% url 'scoring:edit_game' game_name %}" method="post">
+      {% csrf_token %}
+      {% for form in formset %}
+        {{ form.non_field_errors }}
+          {% for field in form %}
+            {% if field.widget_type != 'hidden' %}
+              <div id="div_{{ field.auto_id }}" class="form-floating mb-3">
+                {{ field.errors }}
+                {{ field }}
+                <label for="{{ field.id_for_label }}">Scoring category</label>
+              </div>
+            {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </form>
+    <div class="form-actions">
+      <input
+        type="submit"
+        name="save_and_add_more"
+        value="Save and add more"
+        class="btn btn-primary w-100 btn btn-lg btn-primary"
+        id="submit-id-save_and_add_more"
+      >
+      <input
+        type="submit"
+        name="save_and_exit"
+        value="Save and exit"
+        class="btn btn-primary w-100 btn btn-lg btn-primary"
+        id="submit-id-save_and_exit"
+      >
+    </div>
   </div>
 
   <!-- Button trigger modal -->

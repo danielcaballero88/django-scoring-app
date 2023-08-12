@@ -10,24 +10,13 @@ from .models import Board, Game, Player, Scorer, ScoringCategory, Score
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Player
-        exclude = ["user"]
+        exclude = ["user", "role"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_method = "post"
-        self.helper.form_action = "scoring:profile"
-
-        self.helper.field_class = "form-floating"
-
-        self.helper.layout = Layout(
-            FloatingField("displayname"),
-        )
-
-        self.helper.add_input(
-            Submit("save", "Save", css_class="w-100 btn btn-lg btn-primary")
-        )
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "textinput form-control"
+            field.widget.attrs["placeholder"] = field_name
 
 
 class AddGameForm(forms.ModelForm):
@@ -37,20 +26,9 @@ class AddGameForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_method = "post"
-        self.helper.form_action = "scoring:add_game"
-
-        self.helper.field_class = "form-floating"
-
-        self.helper.layout = Layout(
-            FloatingField("name"),
-        )
-
-        self.helper.add_input(
-            Submit("save", "Save", css_class="w-100 btn btn-lg btn-primary")
-        )
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "textinput form-control"
+            field.widget.attrs["placeholder"] = field_name
 
     def clean(self):
         cleaned_data = super().clean()
@@ -67,34 +45,46 @@ class AddGameForm(forms.ModelForm):
 ScoringCategoryFormSet = forms.inlineformset_factory(Game, ScoringCategory, fields=["name"])
 
 
-class ScoringCategoryFormSetHelper(FormHelper):
-    def __init__(self, *args, **kwargs):
-        game_name = kwargs.pop("game_name")
-        super().__init__(*args, **kwargs)
+def get_scoring_category_formset(game: Game, post_data = None):
+    formset = ScoringCategoryFormSet(instance=game)
+    for form in formset:
+        for field_name, field in form.fields.items():
+            if field_name == "DELETE":
+                field.widget = forms.HiddenInput()
+            else:
+                field.widget.attrs["class"] = "textinput form-control"
+                field.widget.attrs["placeholder"] = field_name
+    return formset
 
-        self.form_method = "post"
-        self.form_action = reverse("scoring:edit_game", args=(game_name,))
+# class ScoringCategoryFormSetHelper(FormHelper):
+#     def __init__(self, *args, **kwargs):
+#         game_name = kwargs.pop("game_name")
+#         super().__init__(*args, **kwargs)
+#         print(self)
 
-        self.field_class = "form-floating"
+        # self.form_method = "post"
+        # self.form_action = reverse("scoring:edit_game", args=(game_name,))
 
-        self.layout = Layout(
-            FloatingField("name"),
-        )
+        # self.field_class = "form-floating"
 
-        self.add_input(
-            Submit(
-                "save_and_add_more",
-                "Save and add more",
-                css_class="w-100 btn btn-lg btn-primary",
-            )
-        )
-        self.add_input(
-            Submit(
-                "save_and_exit",
-                "Save and exit",
-                css_class="w-100 btn btn-lg btn-primary",
-            )
-        )
+        # self.layout = Layout(
+        #     FloatingField("name"),
+        # )
+
+        # self.add_input(
+        #     Submit(
+        #         "save_and_add_more",
+        #         "Save and add more",
+        #         css_class="w-100 btn btn-lg btn-primary",
+        #     )
+        # )
+        # self.add_input(
+        #     Submit(
+        #         "save_and_exit",
+        #         "Save and exit",
+        #         css_class="w-100 btn btn-lg btn-primary",
+        #     )
+        # )
 
 
 def scoring_category_formset_is_valid(formset, *args, **kwargs):

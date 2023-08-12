@@ -4,8 +4,8 @@ from django.forms.boundfield import BoundField
 register = template.Library()
 
 
-@register.filter("dummy")
-def dummy(element: BoundField) -> BoundField:
+@register.filter("dummy_filter")
+def dummy_filter(element: BoundField) -> BoundField:
     """Dummy filter for debugging.
 
     Usage: put a breakpoint inside this filter and use it in a template
