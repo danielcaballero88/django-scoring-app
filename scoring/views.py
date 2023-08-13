@@ -6,17 +6,11 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from django.forms import Form
-
 from .forms import (
     AddGameForm,
-    AddScorersFormSet,
-    AddScorersFormSetHelper,
+    get_add_scorers_formset,
     ProfileForm,
-    ScoringCategoryFormSet,
-    ScoringCategoryFormSetHelper,
-    AddYourScorerForm,
-    AddYourScoreValueForm,
+    get_scoring_category_formset,
     add_your_scores_form_factory,
 )
 from .models import Board, Game, Player, Score, Scorer, ScoringCategory
@@ -50,10 +44,14 @@ def profile(request: HttpRequest):
             displayname = form.cleaned_data["displayname"]
             player.displayname = displayname
             player.save()
+            messages.success(
+                request,
+                f"Successfully updated profile for username: {request.user.username}."
+                f" New displayname: {player.displayname}."
+            )
             return HttpResponseRedirect(reverse("scoring:index"))
     else:  # GET
         form = ProfileForm(instance=player)
-        template = loader.get_template("scoring/profile.html")
 
     # This return is not in the else because it will render errors for the POST case.
     context = {
@@ -96,7 +94,11 @@ def edit_game(request: HttpRequest, game_name: str):
         return HttpResponseRedirect(reverse("scoring:index"))
 
     if request.method == "POST":
-        formset = ScoringCategoryFormSet(request.POST, instance=game)
+        # formset = ScoringCategoryFormSet(request.POST, instance=game)
+        formset = get_scoring_category_formset(
+            game=game,
+            post_data=request.POST,
+        )
         if formset.is_valid():
             game.scoringcategory_set.all().delete()
             for form in formset:
@@ -116,13 +118,12 @@ def edit_game(request: HttpRequest, game_name: str):
             else:  # save_and_exit
                 return HttpResponseRedirect(reverse("scoring:edit_games"))
 
-    else:
-        formset = ScoringCategoryFormSet(instance=game)
+    else: # GET
+        formset = get_scoring_category_formset(game=game)
 
     context = {
         "game_name": game_name,
         "formset": formset,
-        "helper": ScoringCategoryFormSetHelper(game_name=game_name),
     }
 
     return render(
@@ -150,10 +151,12 @@ def add_board(request: HttpRequest):
 @login_required
 def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
     try:
+        # Case where board_pk is passed: editing an existing board.
         board_pk = int(game_name_or_board_pk)
         board = get_object_or_404(Board, pk=board_pk)
         game = board.game
     except ValueError as exc:
+        # Case where game_name is passed: creating a new board.
         game_name = game_name_or_board_pk
         clean_game_name = Game.get_clean_name(game_name)
         game = Game.objects.filter(name=clean_game_name).first()
@@ -168,7 +171,7 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
             # A new board is being created
             board.save()
         game = board.game
-        formset = AddScorersFormSet(request.POST, instance=board)
+        formset = get_add_scorers_formset(board=board, post_data=request.POST)
         if formset.is_valid():
             # Create a new board:
             for form in formset:
@@ -187,14 +190,12 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
                 )
 
     else:  # GET
-        formset = AddScorersFormSet(instance=board)
+        formset = get_add_scorers_formset(board=board)
 
     context = {
         "game_name": game.name,
+        "game_name_or_board_pk": game_name_or_board_pk,  # needed for the form action
         "formset": formset,
-        "helper": AddScorersFormSetHelper(
-            game_name_or_board_pk=str(board.pk) if board.pk is not None else game.name
-        ),
     }
 
     return render(
@@ -318,7 +319,7 @@ def add_your_score(request: HttpRequest, board_pk: int):
             messages.success(request, "Thanks for providing your score!")
             return HttpResponseRedirect(reverse("scoring:index"))
 
-    form = AddYourScoresForm(board_pk=board_pk)
+    form = AddYourScoresForm()
     template = loader.get_template("scoring/add_your_score.html")
     context = {
         "board_pk": board_pk,

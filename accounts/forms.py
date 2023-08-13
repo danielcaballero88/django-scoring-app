@@ -1,45 +1,52 @@
-from crispy_bootstrap5.bootstrap5 import FloatingField
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
 from django import forms
 from django.core.exceptions import ValidationError
 
 from .models import InvitedUser, User
 
 
+def _style_widget(widget_class: forms.Widget):
+    return widget_class(
+        attrs={
+            "class": "textinput form-control",
+            "placeholder": "invited_email",
+        },
+    )
+
+
 class LoginForm(forms.Form):
-    username = forms.CharField(label="Username", max_length=100)
+    username = forms.CharField(
+        label="Username",
+        max_length=100,
+        widget=_style_widget(forms.TextInput),
+    )
     password = forms.CharField(
-        label="Password", max_length=50, widget=forms.PasswordInput
+        label="Password",
+        max_length=50,
+        widget=_style_widget(forms.PasswordInput),
     )
 
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(label="Username", max_length=100)
-    email = forms.EmailField(label="Email", max_length=100)
+    username = forms.CharField(
+        label="Username",
+        max_length=100,
+        widget=_style_widget(forms.TextInput),
+    )
+    email = forms.EmailField(
+        label="Email",
+        max_length=100,
+        widget=_style_widget(forms.EmailInput)
+    )
     password = forms.CharField(
-        label="Password", max_length=50, widget=forms.PasswordInput
+        label="Password",
+        max_length=50,
+        widget=_style_widget(forms.PasswordInput),
     )
     password2 = forms.CharField(
-        label="Repeat password", max_length=50, widget=forms.PasswordInput
+        label="Repeat password",
+        max_length=50,
+        widget=_style_widget(forms.PasswordInput),
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_method = "post"
-        self.helper.form_action = "accounts:register"
-
-        self.helper.field_class = "form-floating"
-
-        self.helper.layout = Layout(
-            FloatingField("username", "email", "password", "password2"),
-        )
-
-        self.helper.add_input(
-            Submit("register", "Register", css_class="w-100 btn btn-lg btn-primary")
-        )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -71,25 +78,21 @@ class RegisterForm(forms.Form):
 
 
 class InviteForm(forms.Form):
-    invited_email = forms.EmailField(label="Email", max_length=100)
-    repeat_email = forms.EmailField(label="Repeat Email", max_length=100)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_method = "post"
-        self.helper.form_action = "accounts:invite"
-
-        self.helper.field_class = "form-floating"
-
-        self.helper.layout = Layout(
-            FloatingField("invited_email", "repeat_email"),
-        )
-
-        self.helper.add_input(
-            Submit("invite", "Invite", css_class="w-100 btn btn-lg btn-primary")
-        )
+    invited_email = forms.EmailField(
+        label="Email",
+        max_length=100,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "textinput form-control",
+                "placeholder": "invited_email",
+            },
+        ),
+    )
+    repeat_email = forms.EmailField(
+        label="Repeat Email",
+        max_length=100,
+        widget=_style_widget(forms.EmailInput),
+    )
 
     def clean(self):
         cleaned_data = super().clean()

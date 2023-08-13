@@ -1,12 +1,36 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% load static %}
 
+{% block extra_head %}
+  <link rel="stylesheet" type="text/css" href="{% static 'scoring/css/forms.css' %}" />
+{% endblock extra_head %}
 
 {% block content %}
 <div class="text-center">
   <div class="form-signin">
     <h1 class="h3 mb-3 fw-normal">Add game:</h1>
-    {% crispy form %}
+    <form action="{% url 'scoring:add_game' %}" method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+      <div id="div_{{ field.auto_id }}" class="form-floating mb-3">
+        {{ field.errors }}
+        {{ field }}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      </div>
+      {% endfor %}
+      <div class="mb-3">
+        <div class="form-floating">
+          <input
+            type="submit"
+            name="save"
+            value="Save"
+            class="btn btn-primary w-100 btn btn-lg btn-primary"
+            id="submit-id-save"
+          >
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock content %}
