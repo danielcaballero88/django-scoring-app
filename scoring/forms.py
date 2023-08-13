@@ -60,36 +60,6 @@ def get_scoring_category_formset(game: Game, post_data = None):
                 field.widget.attrs["placeholder"] = field_name
     return formset
 
-# class ScoringCategoryFormSetHelper(FormHelper):
-#     def __init__(self, *args, **kwargs):
-#         game_name = kwargs.pop("game_name")
-#         super().__init__(*args, **kwargs)
-#         print(self)
-
-        # self.form_method = "post"
-        # self.form_action = reverse("scoring:edit_game", args=(game_name,))
-
-        # self.field_class = "form-floating"
-
-        # self.layout = Layout(
-        #     FloatingField("name"),
-        # )
-
-        # self.add_input(
-        #     Submit(
-        #         "save_and_add_more",
-        #         "Save and add more",
-        #         css_class="w-100 btn btn-lg btn-primary",
-        #     )
-        # )
-        # self.add_input(
-        #     Submit(
-        #         "save_and_exit",
-        #         "Save and exit",
-        #         css_class="w-100 btn btn-lg btn-primary",
-        #     )
-        # )
-
 
 def scoring_category_formset_is_valid(formset, *args, **kwargs):
     # Only keep forms with data: this can be undesired when emptying existing values
