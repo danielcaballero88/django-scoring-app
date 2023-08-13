@@ -1,10 +1,6 @@
-from crispy_bootstrap5.bootstrap5 import FloatingField
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
 from django import forms
-from django.urls import reverse
 
-from .models import Board, Game, Player, Scorer, ScoringCategory, Score
+from .models import Board, Game, Player, Scorer, ScoringCategory
 
 # ----------
 class ProfileForm(forms.ModelForm):

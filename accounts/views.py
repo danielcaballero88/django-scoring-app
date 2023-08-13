@@ -3,13 +3,12 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
 from .forms import InviteForm, LoginForm, RegisterForm
-from .models import InvitedUser, User
+from .models import User
 from .signals import user_registration_signal
 
 

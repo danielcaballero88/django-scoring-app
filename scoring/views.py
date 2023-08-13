@@ -6,8 +6,6 @@ from django.template import loader
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from django.forms import Form
-
 from .forms import (
     AddGameForm,
     get_add_scorers_formset,
