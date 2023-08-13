@@ -18,10 +18,10 @@
     {% endblock extra_head %}
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'scoring:index' %}">
-          Django Scoring App
+          Home
         </a>
         <div class="d-flex">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -36,7 +36,7 @@
                 <li class="nav-item dropdown">
                   <button
                     type="button"
-                    class="btn btn-secondary dropdown-toggle ms-1"
+                    class="btn btn-light dropdown-toggle ms-1"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
