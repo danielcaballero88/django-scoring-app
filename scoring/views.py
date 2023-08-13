@@ -10,10 +10,8 @@ from django.forms import Form
 
 from .forms import (
     AddGameForm,
-    AddScorersFormSet,
-    AddScorersFormSetHelper,
+    get_add_scorers_formset,
     ProfileForm,
-    ScoringCategoryFormSet,
     get_scoring_category_formset,
     add_your_scores_form_factory,
 )
@@ -155,10 +153,12 @@ def add_board(request: HttpRequest):
 @login_required
 def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
     try:
+        # Case where board_pk is passed: editing an existing board.
         board_pk = int(game_name_or_board_pk)
         board = get_object_or_404(Board, pk=board_pk)
         game = board.game
     except ValueError as exc:
+        # Case where game_name is passed: creating a new board.
         game_name = game_name_or_board_pk
         clean_game_name = Game.get_clean_name(game_name)
         game = Game.objects.filter(name=clean_game_name).first()
@@ -173,7 +173,7 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
             # A new board is being created
             board.save()
         game = board.game
-        formset = AddScorersFormSet(request.POST, instance=board)
+        formset = get_add_scorers_formset(board=board, post_data=request.POST)
         if formset.is_valid():
             # Create a new board:
             for form in formset:
@@ -192,14 +192,12 @@ def add_board_players(request: HttpRequest, game_name_or_board_pk: str):
                 )
 
     else:  # GET
-        formset = AddScorersFormSet(instance=board)
+        formset = get_add_scorers_formset(board=board)
 
     context = {
         "game_name": game.name,
+        "game_name_or_board_pk": game_name_or_board_pk,  # needed for the form action
         "formset": formset,
-        "helper": AddScorersFormSetHelper(
-            game_name_or_board_pk=str(board.pk) if board.pk is not None else game.name
-        ),
     }
 
     return render(

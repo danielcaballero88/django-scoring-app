@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
 {% load static %}
 
 {% block extra_head %}
@@ -11,6 +10,40 @@
   <div class="form-signin">
     <h1 class="h3 mb-0 fw-normal">Add Board Players:</h1>
     <p class="small-text mb-3">(...and remove players by leaving names blank)</p>
-    {% crispy formset helper %}
+    <form
+      action="{% url 'scoring:add_board_players' game_name_or_board_pk %}"
+      method="post"
+    >
+      {% csrf_token %}
+      {{ formset.management_form }}
+      {% for form in formset %}
+        {{ form.non_field_errors }}
+          {% for field in form %}
+            <div id="div_{{ field.auto_id }}" class="form-floating mb-3">
+              {{ field.errors }}
+              {{ field }}
+              {% if field.widget_type != 'hidden' %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {% endif %}
+            </div>
+        {% endfor %}
+      {% endfor %}
+      <div class="form-actions">
+        <input
+          type="submit"
+          name="save_and_add_more"
+          value="Save and add more"
+          class="btn btn-primary w-100 btn btn-lg btn-primary"
+          id="submit-id-save_and_add_more"
+        >
+        <input
+          type="submit"
+          name="save_and_exit"
+          value="Save and exit"
+          class="btn btn-primary w-100 btn btn-lg btn-primary"
+          id="submit-id-save_and_exit"
+        >
+      </div>
+    </form>
   </div>
 {% endblock content %}

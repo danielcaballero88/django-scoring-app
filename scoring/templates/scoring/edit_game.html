@@ -13,7 +13,6 @@
     <form action="{% url 'scoring:edit_game' game_name %}" method="post">
       {% csrf_token %}
       {{ formset.management_form }}
-      {% comment %} {{ formset.errors }} {% endcomment %}
       {% for form in formset %}
         {{ form.non_field_errors }}
           {% for field in form %}
