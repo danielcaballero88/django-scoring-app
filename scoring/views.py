@@ -321,7 +321,7 @@ def add_your_score(request: HttpRequest, board_pk: int):
             messages.success(request, "Thanks for providing your score!")
             return HttpResponseRedirect(reverse("scoring:index"))
 
-    form = AddYourScoresForm(board_pk=board_pk)
+    form = AddYourScoresForm()
     template = loader.get_template("scoring/add_your_score.html")
     context = {
         "board_pk": board_pk,

@@ -127,22 +127,10 @@ def add_your_scores_form_factory(form_name: str, sc_names: list[str]):
     )
 
     def form_init(self, *args, **kwargs):
-        board_pk = kwargs.pop("board_pk", None)
         super(Form, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-        self.helper.form_method = "post"
-        if board_pk is not None:
-            self.helper.form_action = reverse("scoring:add_your_score", args=(board_pk,))
-
-        self.helper.field_class = "form-floating"
-
-        floating_fields = [FloatingField(field_name) for field_name in form_fields]
-        self.helper.layout = Layout(*floating_fields)
-
-        self.helper.add_input(
-            Submit("save", "Save", css_class="w-100 btn btn-lg btn-primary")
-        )
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "textinput form-control"
+            field.widget.attrs["placeholder"] = field_name
 
     Form.__init__ = form_init
 
