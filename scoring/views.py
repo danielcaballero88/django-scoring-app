@@ -116,7 +116,7 @@ def edit_game(request: HttpRequest, game_name: str):
                     reverse("scoring:edit_game", args=(game_name,))
                 )
             else:  # save_and_exit
-                return HttpResponseRedirect(reverse("scoring:edit_games"))
+                return HttpResponseRedirect(reverse("scoring:index"))
 
     else: # GET
         formset = get_scoring_category_formset(game=game)
