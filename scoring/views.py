@@ -274,6 +274,7 @@ def board_score(request: HttpRequest, board_pk: int):
         "game": game,
         "scoring_categories": scoring_categories,
         "scorers": scorers,
+        "has_scorers": len(scorers) > 0,
         "score_values": score_values,
         "totals": totals,
         "url_share": request.build_absolute_uri(reverse("scoring:add_your_score", args=(board.pk,))),
