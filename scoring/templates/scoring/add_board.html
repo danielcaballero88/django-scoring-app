@@ -11,6 +11,11 @@
   </ul>
   {% endif %}
 
+  {% comment %} 
+    TODO: Make this into a form, and after clicking the board is created so the user can be redirected
+    to the board already and share it instead of passing through the step of adding players, which is now
+    optional because the board is shareable so people can add their own scores.
+  {% endcomment %}
   <h2>Select game:</h2>
   <div class="list-group">
     {% for game in games %}
