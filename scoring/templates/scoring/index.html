@@ -7,15 +7,6 @@
 
 {% block content %}
 <div class="container mt-1">
-
-  {% if messages %}
-  <ul class="messages">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-  </ul>
-  {% endif %}
-
   <div class="buttons-container">
     <a href="{% url "scoring:boards_list" %}">
       <button class="btn btn-primary w-100" type="button">See Scores</button>
@@ -24,6 +15,5 @@
       <button class="btn btn-primary mt-3 w-100" type="button">Start New Score</button>
     </a>
   </div>
-
 </div>
 {% endblock content %}

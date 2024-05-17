@@ -3,14 +3,6 @@
 {% block content %}
 <div class="container mt-1">
 
-  {% if messages %}
-  <ul class="messages">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-  </ul>
-  {% endif %}
-
   <div class="text-center">
     <h1 class="h3 mb-3 fw-normal">Edit games:</h1>
     <div class="list-group">

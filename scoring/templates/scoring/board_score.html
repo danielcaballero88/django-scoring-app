@@ -14,13 +14,6 @@
 {% endblock extra_head %}
 
 {% block content %}
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
 
 <div class="text-center container">
   <h1 class="h3 mb-0 fw-normal">Board #{{ board.pk }} for game {{ game.name }}</h1>
@@ -88,8 +81,8 @@
           </tbody>
         </table>
       </fieldset>
-      <button 
-        value="Save" 
+      <button
+        value="Save"
         class="btn btn-primary btn-lg w-50"
         >
           Save
@@ -100,10 +93,10 @@
 
 <div class="text-center mt-3">
   <a href="{% url "scoring:add_board_players" board.pk %}">
-    <button 
-      type="button" 
-      class="btn btn-success btn-lg w-50" 
-      data-bs-toggle="modal" 
+    <button
+      type="button"
+      class="btn btn-success btn-lg w-50"
+      data-bs-toggle="modal"
       data-bs-target="#deleteBoardModal"
     >
       Edit Board Players
@@ -113,10 +106,10 @@
 
 <div class="text-center mt-2">
   <!-- Button trigger modal -->
-  <button 
-    type="button" 
-    class="btn btn-success btn btn-lg mt-0 w-50" 
-    data-bs-toggle="modal" 
+  <button
+    type="button"
+    class="btn btn-success btn btn-lg mt-0 w-50"
+    data-bs-toggle="modal"
     data-bs-target="#shareModal"
   >
     Share
@@ -146,10 +139,10 @@
 
 <!-- Button trigger modal -->
 <div class="text-center mt-3">
-  <button 
-    type="button" 
-    class="btn btn-danger w-50" 
-    data-bs-toggle="modal" 
+  <button
+    type="button"
+    class="btn btn-danger w-50"
+    data-bs-toggle="modal"
     data-bs-target="#deleteBoardModal"
   >
     Delete Board
