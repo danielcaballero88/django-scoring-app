@@ -45,22 +45,22 @@
                   <ul class="dropdown-menu dropdown-menu-end position-absolute" aria-labelledby="navbarDropdown">
                     <li class="nav-item">
                       {% if request.user.player.is_editor %}
-                      <a
-                        class="dropdown-item"
-                        href="{% url 'scoring:add_game' %}"
-                      >
-                        Add New Game
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="dropdown-item"
-                        href="{% url 'scoring:edit_games' %}"
-                      >
-                        Edit Games
-                      </a>
-                    </li>
-                    {% endif %}
+                        <a
+                          class="dropdown-item"
+                          href="{% url 'scoring:add_game' %}"
+                        >
+                          Add New Game
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a
+                          class="dropdown-item"
+                          href="{% url 'scoring:edit_games' %}"
+                        >
+                          Edit Games
+                        </a>
+                      </li>
+                    {% endif %}  <!-- is_editor -->
                     <li><hr class="dropdown-divider"></li>
                     <li class="nav-item">
                       <a
@@ -88,8 +88,8 @@
                     </li>
                   </ul>
                 </li>
-              {% endif %}
-            {% endif %}
+              {% endif %} <!-- is_authenticated  -->
+            {% endif %} <!-- is_anonymous -->
           </ul>
         </div>
       </div>
